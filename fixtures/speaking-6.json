@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-SPEAKING-6",
+  "module": "SPEAKING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-SPEAKING-6",
+      "taskNumber": 6,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "prompt": "Synthetic Speaking Task 6: tell your friend about a community activity.",
+        "alternatives": [
+          "Tell the organizer you will attend the morning activity.",
+          "Tell your friend you will attend the evening activity."
+        ]
+      }
+    }
+  ]
+}

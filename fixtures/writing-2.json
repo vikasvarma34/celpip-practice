@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-WRITING-2",
+  "module": "WRITING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-WRITING-2",
+      "taskNumber": 2,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "title": "Synthetic community survey",
+        "scenario": "The centre is planning a new weekly activity.",
+        "instructions": "Choose and support one option in approximately 150\u2013200 words.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Morning walking group"
+          },
+          {
+            "id": "B",
+            "text": "Evening reading group"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-SPEAKING-5",
+  "module": "SPEAKING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-SPEAKING-5",
+      "taskNumber": 5,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "prompt": "Synthetic Speaking Task 5: tell your friend about a community activity.",
+        "persuasionPrompt": "Persuade your friend to choose your selected activity instead of option C.",
+        "options": [
+          {
+            "id": "A",
+            "title": "Synthetic choice A",
+            "image": "images/asset-0.png",
+            "details": [
+              "Cost: 10 dollars",
+              "Location: community centre"
+            ]
+          },
+          {
+            "id": "B",
+            "title": "Synthetic choice B",
+            "image": "images/asset-1.png",
+            "details": [
+              "Cost: 11 dollars",
+              "Location: community centre"
+            ]
+          },
+          {
+            "id": "C",
+            "title": "Synthetic choice C",
+            "image": "images/asset-2.png",
+            "details": [
+              "Cost: 12 dollars",
+              "Location: community centre"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-READING-3",
+  "module": "READING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-READING-3",
+      "taskNumber": 3,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "instructions": "Synthetic test only. Choose an option for each item. For matching, E means information is not stated.",
+        "passage": [
+          {
+            "type": "PARAGRAPH",
+            "label": "A",
+            "text": "Synthetic paragraph A: the community room is open on weekday mornings."
+          },
+          {
+            "type": "PARAGRAPH",
+            "label": "B",
+            "text": "Synthetic paragraph B: the community room is open on weekday mornings."
+          },
+          {
+            "type": "PARAGRAPH",
+            "label": "C",
+            "text": "Synthetic paragraph C: the community room is open on weekday mornings."
+          },
+          {
+            "type": "PARAGRAPH",
+            "label": "D",
+            "text": "Synthetic paragraph D: the community room is open on weekday mornings."
+          }
+        ],
+        "questionGroups": [
+          {
+            "type": "PARAGRAPH_MATCH",
+            "questions": [
+              {
+                "id": "Q01",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q01: which day is named?"
+              },
+              {
+                "id": "Q02",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q02: which day is named?"
+              },
+              {
+                "id": "Q03",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q03: which day is named?"
+              },
+              {
+                "id": "Q04",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q04: which day is named?"
+              },
+              {
+                "id": "Q05",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q05: which day is named?"
+              },
+              {
+                "id": "Q06",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q06: which day is named?"
+              },
+              {
+                "id": "Q07",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q07: which day is named?"
+              },
+              {
+                "id": "Q08",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q08: which day is named?"
+              },
+              {
+                "id": "Q09",
+                "options": [
+                  "A",
+                  "B",
+                  "C",
+                  "D",
+                  "E"
+                ],
+                "prompt": "Synthetic question Q09: which day is named?"
+              }
+            ]
+          }
+        ]
+      },
+      "answerKey": {
+        "Q01": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q02": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q03": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q04": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q05": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q06": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q07": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q08": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q09": {
+          "correctOption": 4,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        }
+      }
+    }
+  ]
+}

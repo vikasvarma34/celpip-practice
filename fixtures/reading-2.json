@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-READING-2",
+  "module": "READING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-READING-2",
+      "taskNumber": 2,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "instructions": "Synthetic test only. Choose an option for each item. For matching, E means information is not stated.",
+        "passage": [
+          {
+            "type": "TABLE",
+            "headers": [
+              "Room",
+              "Hours"
+            ],
+            "rows": [
+              [
+                "Library",
+                "09:00\u201317:00"
+              ],
+              [
+                "Studio",
+                "10:00\u201316:00"
+              ]
+            ]
+          }
+        ],
+        "questionGroups": [
+          {
+            "type": "INLINE_BLANK",
+            "questions": [
+              {
+                "id": "Q01",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              },
+              {
+                "id": "Q02",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              },
+              {
+                "id": "Q03",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              },
+              {
+                "id": "Q04",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              },
+              {
+                "id": "Q05",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              }
+            ],
+            "text": "Dear Sam, the selected values are {{Q01}}, {{Q02}}, {{Q03}}, {{Q04}}, {{Q05}}. Thank you, Alex."
+          },
+          {
+            "type": "MULTIPLE_CHOICE",
+            "questions": [
+              {
+                "id": "Q06",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "prompt": "Synthetic question Q06: which day is named?"
+              },
+              {
+                "id": "Q07",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "prompt": "Synthetic question Q07: which day is named?"
+              },
+              {
+                "id": "Q08",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "prompt": "Synthetic question Q08: which day is named?"
+              }
+            ]
+          }
+        ]
+      },
+      "answerKey": {
+        "Q01": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q02": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q03": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q04": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q05": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q06": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q07": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q08": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        }
+      }
+    }
+  ]
+}

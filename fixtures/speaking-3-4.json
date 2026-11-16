@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-SPEAKING-3-4",
+  "module": "SPEAKING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-SPEAKING-3",
+      "taskNumber": 3,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "prompt": "Synthetic Task 3: describe the scene.",
+        "image": "images/asset-0.png"
+      }
+    },
+    {
+      "exerciseId": "SYNTHETIC-SPEAKING-4",
+      "taskNumber": 4,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "prompt": "Synthetic Task 4: predict what happens next.",
+        "image": "images/asset-0.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-READING-4",
+  "module": "READING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-READING-4",
+      "taskNumber": 4,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "instructions": "Synthetic test only. Choose an option for each item. For matching, E means information is not stated.",
+        "passage": [
+          {
+            "type": "TEXT",
+            "text": "Synthetic Part 4 passage. Dear Alex, the community meeting is on Tuesday at ten. Please bring the room booking form. Regards, Sam."
+          }
+        ],
+        "questionGroups": [
+          {
+            "type": "MULTIPLE_CHOICE",
+            "questions": [
+              {
+                "id": "Q01",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "prompt": "Synthetic question Q01: which day is named?"
+              },
+              {
+                "id": "Q02",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "prompt": "Synthetic question Q02: which day is named?"
+              },
+              {
+                "id": "Q03",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "prompt": "Synthetic question Q03: which day is named?"
+              },
+              {
+                "id": "Q04",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "prompt": "Synthetic question Q04: which day is named?"
+              },
+              {
+                "id": "Q05",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "prompt": "Synthetic question Q05: which day is named?"
+              }
+            ]
+          },
+          {
+            "type": "INLINE_BLANK",
+            "questions": [
+              {
+                "id": "Q06",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              },
+              {
+                "id": "Q07",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              },
+              {
+                "id": "Q08",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              },
+              {
+                "id": "Q09",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              },
+              {
+                "id": "Q10",
+                "options": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ]
+              }
+            ],
+            "text": "Dear Sam, the selected values are {{Q06}}, {{Q07}}, {{Q08}}, {{Q09}}, {{Q10}}. Thank you, Alex."
+          }
+        ]
+      },
+      "answerKey": {
+        "Q01": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q02": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q03": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q04": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q05": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q06": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q07": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q08": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q09": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        },
+        "Q10": {
+          "correctOption": 0,
+          "explanation": "Synthetic validation key; this fixture is not assessment material."
+        }
+      }
+    }
+  ]
+}

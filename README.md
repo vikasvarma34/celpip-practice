@@ -1,6 +1,6 @@
 # CELPIP Practice
 
-Local-only Spring Boot and React application. Initialization is complete; practice features and APIs are not implemented yet.
+Local-only Spring Boot and React application. Initialization and backend foundation/imports are implemented. Practice execution and frontend features remain pending. See [backend API and storage contract](backend/API.md).
 
 ## Toolchain
 
@@ -18,7 +18,7 @@ From the repository root:
 
 The script resolves its own repository location, selects installed Java 21, checks both dedicated ports, stops only processes whose recorded PID, start time and command match, waits for port release, builds both projects, starts direct Java/Node background processes, checks their static readiness markers, and opens Google Chrome at http://127.0.0.1:47322. It uses TERM first and KILL only after 20 seconds. An unfamiliar listener causes an error before either service is stopped. Do not delete `.local` while servers are running: losing ownership records makes the script refuse to stop them. Concurrent invocations are rejected using a directory lock; an interrupted script may require removing `.local/restart.lock` after confirming no restart is running.
 
-Backend: `127.0.0.1:47321`. Frontend: `127.0.0.1:47322`, with Vite `strictPort` and `/api` proxy to the backend. No API routes exist yet. `/startup.txt` on each server is a static initialization probe, not a database health API. The script verifies the responding listener is the process it started.
+Backend: `127.0.0.1:47321`. Frontend: `127.0.0.1:47322`, with Vite `strictPort` and `/api` proxy to the backend. Foundation routes `/api/health`, `/api/config`, `/api/imports` and `/api/packages/{id}` are available. `/startup.txt` on each server is a static initialization probe, not a database health API. The script verifies the responding listener is the process it started.
 
 Logs (replaced on each restart): `.local/backend.log`, `.local/frontend.log`. PID/identity records also live in `.local/`. Failures report these paths; inspect them before retrying. Builds need dependency access on first use. This is the development launcher; packaged single-server launch and macOS Shortcut registration remain Phase 4 work.
 
@@ -34,6 +34,8 @@ npm run lint
 npm run build
 ```
 
-The backend context test uses isolated in-memory H2. Runtime H2 uses `${CELPIP_DATA_DIR:-$HOME/CELPIP-Data}/database/celpip.mv.db`; the verified default on this Mac is `/Users/vikasvarmapokala/CELPIP-Data`. Set `CELPIP_DATA_DIR` to an absolute external path to override it. Schema generation is disabled (`ddl-auto=none`), and no entities/migrations are present yet. H2 console and open-in-view are disabled. Never use learner data for tests. For backup/restore, stop the application and copy the entire data root; restore only while stopped.
+All backend tests use isolated temporary data directories; integration/restart tests use file-based H2. Runtime H2 uses `${CELPIP_DATA_DIR:-$HOME/CELPIP-Data}/database/celpip.mv.db`; the verified default on this Mac is `/Users/vikasvarmapokala/CELPIP-Data`. Set `CELPIP_DATA_DIR` to an absolute external path to override it. Flyway performs versioned schema migrations; Hibernate uses `ddl-auto=validate`. Canonical imports reside in H2 and managed image bytes on disk. H2 console and open-in-view are disabled. Never use learner data for tests. For backup/restore, stop the application and copy the entire data root; restore only while stopped.
 
 For manual foreground development, run `./mvnw spring-boot:run` in `backend/` and `npm run dev` in `frontend/` in separate terminals. Stop those processes with Ctrl-C. The restart script deliberately refuses to terminate manually started listeners without its ownership records. To stop script-started services manually, inspect each PID and command from `.local/*.pid` with `ps`, then send TERM to those verified PIDs only; never kill processes by name.
+
+Completed and verified tasks must each have their own Git commit and push, with remote-head verification. Do not force-push.

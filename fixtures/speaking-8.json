@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-SPEAKING-8",
+  "module": "SPEAKING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-SPEAKING-8",
+      "taskNumber": 8,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "prompt": "Synthetic Speaking Task 8: tell your friend about a community activity.",
+        "image": "images/asset-0.png"
+      }
+    }
+  ]
+}

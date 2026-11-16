@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "packageId": "SYNTHETIC-WRITING-1",
+  "module": "WRITING",
+  "exercises": [
+    {
+      "exerciseId": "SYNTHETIC-WRITING-1",
+      "taskNumber": 1,
+      "source": {
+        "type": "AI_GENERATED",
+        "url": null
+      },
+      "content": {
+        "scenario": "Synthetic scenario: your booked community room is unavailable.",
+        "instructions": "Write an email to the manager in approximately 150\u2013200 words.",
+        "requirements": [
+          "Describe the booking.",
+          "Explain the problem.",
+          "Request another room."
+        ]
+      }
+    }
+  ]
+}
