@@ -45,13 +45,13 @@ celpip-practice/
     package.json
     package-lock.json
     src/...
-  scripts/                 # local startup helper, when phase 4 is reached
+  scripts/                 # development restart helper initialized in Task 01
   fixtures/                # synthetic non-practice fixtures for automated tests
 ```
 
 Recommended baseline (engineering decisions, not user-mandated version numbers): Java 21 LTS, Maven wrapper, a stable compatible Spring Boot version, React with TypeScript/Vite, npm lockfile, Spring Web, Validation, Data JPA, file-based H2 and Spring Boot Test. Inspect installed Java/node/npm before scaffolding; select compatible maintained stable versions, pin them and document exact requirements. No external database, Redis, message broker or framework-heavy UI library needed; use ordinary CSS or a small component approach. Use `@RestController`, `@Service`, repositories, `@Transactional` at the appropriate boundaries and a global error handler; favor constructor injection. Do not divide the code into layers merely for their own sake.
 
-Local application should bind to `127.0.0.1`, default backend port 8080 (configurable), Vite dev port 5173 (configurable), using the Vite `/api` proxy in development. For daily use prefer a built React bundle served by Spring Boot at one localhost URL; package build or documented simple build-copy step must work from clean checkout. No public interfaces, wildcard cross-origin access or external network dependence for running imported tests. Use appropriate host/origin checks for state-changing local requests and avoid browser caching of unrevealed content. Disable H2 web console by default. Browser microphone on localhost must be tested in the actual Chrome environment. Dev and packaged mode should use the same storage contract.
+Local application should bind to `127.0.0.1`, reserved backend port 47321, Vite dev port 47322 (`strictPort: true`), using the Vite `/api` proxy to `http://127.0.0.1:47321` in development. Task 01 authorizes `scripts/restart-local.sh` now: resolve the repository, refuse unfamiliar listeners, gracefully stop verified owned processes (force only after timeout), verify port release, build/start both servers in the background, check static readiness markers, and open Google Chrome. Separate logs and PID/start-time/command records live in ignored `.local/`. This development restart mechanism does not complete the Phase 4 packaged launch/Shortcut gate. For daily use prefer a built React bundle served by Spring Boot at one localhost URL; package build or documented simple build-copy step must work from clean checkout. No public interfaces, wildcard cross-origin access or external network dependence for running imported tests. Use appropriate host/origin checks for state-changing local requests and avoid browser caching of unrevealed content. Disable H2 web console by default. Browser microphone on localhost must be tested in the actual Chrome environment. Dev and packaged mode should use the same storage contract.
 
 ## 4. Data directory and persistence
 
@@ -206,12 +206,15 @@ Initial status: repository created/opened by learner; code, runtime, browser rec
 
 | Phase | State | Evidence / next step |
 |---|---|---|
-| 1. Backend | NOT STARTED | Await scoped prompt from ChatGPT |
-| 2. Frontend | NOT STARTED | Await backend acceptance and API contract |
+| 0. Project initialization (Task 01) | COMPLETE | Both builds, backend context test, frontend typecheck/lint, HTTP readiness and two consecutive restarts passed; unfamiliar listener refused |
+| 1. Backend | NOT STARTED | Scaffold only; feature implementation awaits scoped prompt |
+| 2. Frontend | NOT STARTED | Scaffold only; interface implementation awaits backend acceptance and API contract |
 | 3. Integration/test | NOT STARTED | Await frontend implementation |
 | 4. Polish/launch | NOT STARTED | Await integration gate |
 
 Update the relevant row and append a short dated change/test note when a phase actually finishes. If partially done use IN PROGRESS or BLOCKED, and identify remaining acceptance items. Preserve prior records. Keep user-facing reports concise. Do not confuse engineering completion with CELPIP learner progress.
+
+2026-11-16 — Task 01 complete: Java 21.0.12, system Maven 3.9.16 (wrapper 3.10.1), Node 26.7.0 and npm 11.19.0 verified. Pinned Spring Boot 4.1.2, React 19.3.1, TypeScript 7.0.2 and Vite 8.3.8. Both dedicated ports were initially unused (`lsof`); both servers bind only to 127.0.0.1. `./mvnw -B -ntp verify`, frontend build/typecheck/lint and shell syntax check passed. Two consecutive script executions replaced PIDs 59574/59578 with 59875/59883; old processes exited and exactly one listener remained per port. Both static probes returned HTTP 200 and Chrome launch succeeded. A synthetic unfamiliar listener was refused and remained alive. Git ignore checks passed for build output, dependencies, logs, database files and recordings. Initializr emitted an invalid `.RELEASE` suffix; corrected to published Maven coordinate 4.1.2 before successful builds. No business logic, entities, application APIs or examination UI added. Task 01 brings development restart setup forward by explicit instruction; full backend/frontend feature phases and Phase 4 launch acceptance remain unstarted.
 
 Contract change control: Appendix A captures the exact canonical generation rules as supplied; if a later implementation uncovers an inconsistency, raise it with ChatGPT before making a breaking change. Changes to import shape, timing defaults, supported units or assessment rules require aligned changes to both the coaching Project Sources generation guide and repository specification, plus regression tests. The current Practice Material Registry already exists (ID `1LBhOrJYWFf8g8zEOYZwp76zuhCDwDU_Vmau_zAz8xDE`); the older creation-status language in the source guide is superseded by the live Project Instructions. The application does not read or write it. The guide and live registry use slightly different lifecycle labels; those are coaching-side records, not the local attempt-status enum. Do not mix them. The two-file versus three-file language in the older coaching guide is likewise superseded by the latest Project Instructions. No Drive integration needed in this repository.
 
