@@ -1,3 +1,4 @@
+import ImportScreen from "./ImportScreen";
 import { useEffect, useRef, useState } from "react";
 
 type IconName =
@@ -89,7 +90,7 @@ const pages: Record<string, string> = {
   reading: "Reading",
   writing: "Writing",
   speaking: "Speaking",
-  import: "Import exercise",
+  import: "Load exercise",
   history: "Practice history",
 };
 const currentPage = () => window.location.hash.replace(/^#\/?/, "");
@@ -182,7 +183,7 @@ export default function App() {
                   <Icon name="upload" />
                 </span>
                 <span className="secondary-copy">
-                  <span className="secondary-title">Import exercise</span>
+                  <span className="secondary-title">Load exercise</span>
                   <span className="secondary-subtitle">ZIP or JSON.</span>
                 </span>
                 <Icon name="chevron" className="secondary-chevron" />
@@ -199,6 +200,8 @@ export default function App() {
               </a>
             </div>
           </>
+        ) : ["reading", "writing", "speaking", "import"].includes(page) ? (
+          <ImportScreen key={page} module={page === "import" ? undefined : page.toUpperCase()} />
         ) : (
           <section className="placeholder">
             <a className="back-link" href="#/">

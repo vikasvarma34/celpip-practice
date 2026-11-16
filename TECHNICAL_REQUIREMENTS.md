@@ -208,7 +208,7 @@ Initial status: repository created/opened by learner; code, runtime, browser rec
 |---|---|---|
 | 0. Project initialization (Task 01) | COMPLETE | Both builds, backend context test, frontend typecheck/lint, HTTP readiness and two consecutive restarts passed; unfamiliar listener refused |
 | 1. Backend | COMPLETE | Task 03 backend acceptance passed: 166 tests, packaged build, scoped media/export APIs and local script checks. Browser capture/countdowns/playback remain Phase 3 integration checks |
-| 2. Frontend | IN PROGRESS | Task 04 COMPLETE and visually approved. Import, examination and history interfaces remain pending |
+| 2. Frontend | IN PROGRESS | Task 04 COMPLETE and visually approved. Task 05 import/ready implemented, awaiting approval; examination and history interfaces remain pending |
 | 3. Integration/test | NOT STARTED | Await frontend implementation |
 | 4. Polish/launch | NOT STARTED | Await integration gate |
 
@@ -547,3 +547,7 @@ Inspect the actual image files, not just the source description or generation pr
 
 
 Task 04 approved: primary navy #243B60; hover #304D78, shared by application branding and favicon. Task 05 imports/ready screen now authorized; Task 05 commit awaits separate approval.
+
+Task 05: shared module-scoped upload/drop/paste interface with explicit image path mapping, loading lock, backend errors and duplicate reuse. Neutral ready card shows only module/task/count and mode selection; Start remains disabled and no session/content/image endpoints are called. Frontend typecheck/lint/build passed; 37 isolated ImportIntegrationTest cases passed covering ZIP/JSON/paste, invalid/duplicate/mismatched imports and neutral responses. Automated browser interaction/visual review remains pending. Task 04 commit 73ea54c25742fd02a5c985a24a9bab358807844f pushed and remote-verified before implementation. Task 05 is uncommitted pending user approval.
+
+Task 05 review follow-up: user confirmed Reading and Speaking loading works. Renamed visible “Import exercise” actions/headings to “Load exercise”; moved Practice mode heading inside a padded radio-group panel to avoid border overlap. Start remains intentionally disabled pending examination UI. No commit/push.
