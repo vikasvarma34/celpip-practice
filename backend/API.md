@@ -80,3 +80,90 @@ Host checks allow loopback hostnames only. Mutating browser requests must have a
 Content quality, source reuse rights, factual answer correctness, scenario coherence and visual suitability remain generator/reviewer responsibilities, as specified in Appendix A. The importer enforces structural, type, reference and safety constraints; it does not invent NLP or AI assessments.
 
 Implementation references: [Commons Compress ZIP metadata and symlink attributes](https://commons.apache.org/proper/commons-compress/zip.html), [Jackson 3 migration/release notes](https://github.com/FasterXML/jackson/wiki/Jackson-Release-3.0).
+
+# Practice execution API (Task 03)
+
+All JSON request objects below have exact fields: unexpected/missing fields, duplicate keys and numeric coercion are rejected. Durations are nonnegative integer **milliseconds**, measured by the frontend's monotonic clock after assets are ready. No server wall-clock proctoring is introduced. Speaking TIMED/EXAM transitions require reported elapsed preparation/response at least the configured duration; PRACTICE uses manual progression. Reading/Writing may submit early and may submit empty at expiry. Client timers/microphone preflight are frontend responsibilities.
+
+## POST /api/sessions
+
+Request: `{"packageId":"…","mode":"PRACTICE"}` (also TIMED, EXAM). Every call creates a new session and first attempt; retrying Start creates a distinct attempt, so disable duplicate Start in the UI. A paired package starts Task 3 only; Task 4 has no attempt until Task 3 is saved.
+
+Response (also `GET /api/sessions/{id}`):
+
+```json
+{
+  "sessionId":"uuid","packageId":"id","mode":"PRACTICE","status":"IN_PROGRESS",
+  "attemptId":"uuid","taskNumber":1,"stage":"PREPARATION",
+  "timing":{"module":"SPEAKING","taskNumber":1,"selectionSeconds":0,"preparationSeconds":30,"answerSeconds":90},
+  "draft":null,"content":{"prompt":"The active prompt"}
+}
+```
+
+Stages: Reading/Writing `RESPONSE`; Speaking `SELECTION` (Task 5 only) → `PREPARATION` → `RECORDING` → `COMPLETED`. Other Speaking tasks start at `PREPARATION`. Status is `IN_PROGRESS`, `COMPLETED` or `INTERRUPTED`. Completed session retrieval omits content; explicitly open attempt review. Interrupted sessions retain their last stage and exposed content, with `interruptionReason`. Images in content are **opaque asset IDs**, replacing import-relative paths. Source metadata and Reading keys are excluded.
+
+## POST /api/sessions/{id}/advance
+
+```json
+{"attemptId":"uuid","action":"LOCK_SELECTION","elapsedMs":60000,"choice":null,"timeout":true}
+```
+
+All five fields required. `LOCK_SELECTION` is valid only for Task 5 selection: choice A/B, or null at timed timeout (fallback A, `automaticChoice:true`). Explicit confirmation requires A/B and `timeout:false`; PRACTICE does not allow timeout. Before lock, only A/B and initial prompt are returned. After lock, only the chosen option and C are returned, with persuasion instructions. Selection cannot be changed.
+
+`START_RECORDING` requires PREPARATION, `choice:null`, `timeout:false` and measured preparation `elapsedMs`. Return: updated session DTO. No explicit Task 3→4 advance exists: successful audio submission is its sole transition. Stale/repeated advance requests return 409; GET the session to reconcile. Stage calls cannot reference another session's attempt.
+
+## PATCH /api/attempts/{id}/draft
+
+Reading: `{"answers":{"Q01":0,"Q02":null}}`. Missing or null means unanswered. Unknown IDs, strings/floats or out-of-range indices are rejected.
+
+Writing 1: `{"text":"exact original text"}`. Writing 2: `{"text":"exact original text","choice":"A"}` (A, B or null). Empty text is valid. Response: `{"attemptId":"uuid","saved":true}`. Only an active RESPONSE attempt accepts drafts; completed/interrupted attempts cannot be modified.
+
+## POST /api/attempts/{id}/submit
+
+Reading/Writing use `application/json`:
+
+```json
+{"response":{"answers":{"Q01":0}},"durationMs":660000}
+```
+
+`response` has the same module-specific shape as draft. Successful response is the review DTO described below. Submission persists exact input strings without trimming, newline normalization or spelling correction. Submission equality ignores JSON object-key order but preserves actual response values and durations; same submission returns the stored review, changed submission returns 409. Reading scores one per correct and zero per wrong/unanswered, with no official score conversion. Writing has no score.
+
+Word count is the number of runs of non-whitespace under Unicode `White_Space` semantics (Java `Pattern.UNICODE_CHARACTER_CLASS` and `\S+`). Frontend equivalent: `text.match(/[^\p{White_Space}]+/gu)?.length ?? 0`. Hyphenated words and contractions count as one; punctuation-only tokens also count. Original text is unchanged. 150–200 is guidance, not a cap.
+
+Speaking uses `multipart/form-data` with `audio` (one file) and `metadata` (text field containing `{"durationMs":60000}`). Supported profile: **audio-only WebM/Opus**, MIME `audio/webm` or `audio/webm;codecs=opus`, original bytes retained, no transcoding. Frontend must feature-detect this profile before revealing the prompt; other containers/codecs return 422 rather than guessing an extension. The configurable `celpip.audio.max-bytes` defaults to 50 MiB, with HTTP per-file ceiling 50 MiB and total multipart ceiling 65 MiB. Import-specific 30 MiB ZIP/15 MiB image limits remain unchanged.
+
+Validation checks EBML framing/bounds, WebM doctype, one audio Opus track and OpusHead, complete nonempty unlaced audio blocks, MIME and limits. This is container/codec framing validation, not speech intelligibility assessment or a native Opus decoder. Chrome MediaRecorder capture, its output compatibility, actual playback and suspension behavior remain integration checks.
+
+Audio response: `{"attemptId":"uuid","saved":true,"session":{…updated session DTO…}}`. Task 3 success creates Task 4 and returns its preparation content; Task 4 failure cannot erase Task 3. Repeating identical audio bytes/duration returns acknowledgement without creating another recording or attempt; conflicting bytes/duration return 409. On 503, retain the frontend Blob and retry the same attempt; no success/advance is returned before the DB transaction commits. Unsaved browser data cannot be recovered by the server after browser loss.
+
+## POST /api/sessions/{id}/interrupt
+
+Request: `{"reason":"ABANDONED"}`; also `BROWSER_RELOAD`, `DEVICE_ERROR`, `SUSPENDED`. Marks only outstanding work interrupted; completed attempts remain completed. Repeated interruption is safe. Returns session DTO. Startup marks all previously in-progress sessions/attempts interrupted with `APPLICATION_RESTART`, preserving drafts and earlier paired recordings. Interrupted sessions cannot resume as fresh exams; review/copy their drafts and deliberately start a new session for reattempts.
+
+## GET /api/history and GET /api/attempts/{id}/review
+
+History is a newest-session-first array. Each row has `sessionId`, `packageId`, `mode`, `status`, `createdAt`, and ordered `attempts`. Attempt summaries contain `attemptId`, `sessionId`, `exerciseId`, `module`, `taskNumber`, `attemptNumber`, `mode`, `status`, `stage`, `createdAt`, `durationMs`, `preparationMs`, `selectionMs`, `choice`, `automaticChoice`. Completed Reading summaries also contain `correct` and `total`. Unstarted imports are absent; paired attempts share one row. No prompts, answer keys or response text appear in history.
+
+Review requires COMPLETED or INTERRUPTED. It contains the same attempt summary plus exposed `content` and saved `draft`. Completed attempts add `response` and `result`; audio attempts add `audioUrl`. Interrupted work has no results. Reading result: `{"correct":1,"total":11,"questions":[{"questionId":"Q01","correct":true,"selectedOption":0,"correctOption":0,"explanation":"…"},…]}`. Writing result: `{"wordCount":170,"outsideTarget":false,"missingChoice":false}`. Speaking has null response and empty result; choice/timings/audio reference are in the attempt DTO.
+
+## Controlled files
+
+- `GET /api/assets/{assetId}?sessionId={id}` accesses only the current accessible stage's images. Alternatively `?attemptId={id}` accesses explicit completed/interrupted review images. Supply exactly one scope. Future Task 4 or Task 5 C cannot be fetched early, and the rejected Task 5 option is inaccessible after lock.
+- `GET /api/attempts/{id}/audio` serves only completed recordings as `audio/webm`; Spring Resource handling supports browser range requests. Missing/interrupted/unsubmitted recordings cannot be retrieved.
+- No request accepts an arbitrary path. Managed file resolution verifies root containment, existence and every path component for symlinks. All API responses, including file responses, use no-store.
+
+## Evaluation and exports
+
+`GET /api/attempts/{id}/evaluation-context?paired=false` returns `{"text":"human-readable context","assets":[{"id":"…","url":"…","kind":"IMAGE|AUDIO"}]}`. Completed attempts only. `paired=true` requires both Tasks 3 and 4 completed in the same session, includes both recordings/prompts and the shared image once. Reading contains the full passage/diagram for evidence and wrong/unanswered items with their selected/correct choices and explanations. Writing includes full question, exact response, choice, count and timings. Speaking includes original relevant instructions and timings; Task 5 excludes the rejected option. No unrelated history, private paths or unrevealed content is included.
+
+`POST /api/exports` request: `{"attemptId":"uuid","paired":false}`. Creates an explicit immutable evaluation ZIP, response `{"exportId":"uuid","downloadUrl":"/api/exports/uuid"}`. `GET /api/exports/{id}` downloads it. ZIP contains `evaluation.txt`, relevant original recordings and images only, with shared images deduplicated. Export is an evaluation artifact, not an exercise-import package.
+
+`POST /api/reveal` request: `{"kind":"AUDIO","id":"attempt UUID","attemptId":null}`; use `kind:"EXPORT"` with export UUID or `kind:"IMAGE"` with asset ID and completed/interrupted review `attemptId`. Calls `/usr/bin/open -R` through a ProcessBuilder argument list after managed-path checks. Success: `{"revealed":true}`; unsupported OS, missing file or launch failure returns an error. No shell/path input is accepted.
+
+## Persistence and recovery additions
+
+Flyway V2 adds `practice_session` and `practice_attempt`; previous migrations/imports are unchanged. Imported canonical content is immutable, so attempts refer to the original exercise. Attempts preserve drafts, exact responses, historical grading results, UTC timestamps, sequential attempt numbers and original audio metadata. Mutations are serialized within the one owning application process; transactions create/complete attempts and pair advancement together.
+
+Recording names include the system-local date, bounded exercise ID, attempt number and UUID, under an internal package directory. Media saves stage bytes and a journal before installation, then commit metadata. Failures compensate files; restart removes journaled uncommitted recordings and verifies committed audio hashes. Import recovery explicitly leaves media journals for media recovery. Unjournaled recordings are preserved, never automatically served. Exports are written to temporary ZIPs then moved atomically to random managed IDs. Back up the complete data root with the application stopped.
+
+WebM framing references: [WebM container guidelines](https://www.webmproject.org/docs/container/) and [Matroska elements](https://www.matroska.org/technical/elements.html).

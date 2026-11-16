@@ -21,7 +21,7 @@ public class FoundationController {
     public record Health(String status, boolean storageReady, boolean databaseReady) {}
     public record Timing(String module, int taskNumber, int selectionSeconds, int preparationSeconds, int answerSeconds) {}
     public record Config(int schemaVersion, List<String> modules, List<String> modes, List<Timing> timings, ImportLimits importLimits) {}
-    private static final List<Timing> TIMINGS = List.of(
+    static final List<Timing> TIMINGS = List.of(
         new Timing("READING",1,0,0,660), new Timing("READING",2,0,0,540), new Timing("READING",3,0,0,600), new Timing("READING",4,0,0,780),
         new Timing("WRITING",1,0,0,1620), new Timing("WRITING",2,0,0,1560),
         new Timing("SPEAKING",1,0,30,90), new Timing("SPEAKING",2,0,30,60), new Timing("SPEAKING",3,0,30,60), new Timing("SPEAKING",4,0,30,60),

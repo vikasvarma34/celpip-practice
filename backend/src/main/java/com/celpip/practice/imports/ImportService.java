@@ -29,6 +29,7 @@ public class ImportService {
         // Only this process can own the data root. Uncommitted files are never served.
         try (var paths = Files.list(storage.root.resolve("staging"))) {
             for (Path p : paths.toList()) {
+                if (p.getFileName().toString().startsWith("media-")) continue;
                 Path journal = p.resolve("install-key");
                 if (Files.isSymbolicLink(p) || Files.isSymbolicLink(journal)) throw new IOException("Unsafe import recovery journal.");
                 if (Files.isRegularFile(journal, LinkOption.NOFOLLOW_LINKS)) {
