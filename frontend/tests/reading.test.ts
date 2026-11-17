@@ -49,14 +49,16 @@ test('image passage keeps proportions via shared renderer and supports full-size
   try{const {Passage}=await vite.ssrLoadModule('/src/ReadingContent.tsx');const html=renderToStaticMarkup(createElement(Passage,{blocks:[{type:'IMAGE',image:'opaque-id'}],images:{'opaque-id':'blob:test'}}));assert.ok(html.includes('src="blob:test"'));assert.ok(html.includes('Open diagram at full size'))}finally{await vite.close()}
 })
 
-test('Reading results show raw counts, saved selections, correct answers, explanations and action order',async()=>{
+test('Reading results default to collapsed mistakes with summary and original reference',async()=>{
   const vite=await createServer({server:{middlewareMode:true,hmr:false,ws:false},appType:'custom'})
   try {
     const {ReadingResults}=await vite.ssrLoadModule('/src/ReadingExam.tsx')
     const fixture=JSON.parse(await readFile(new URL('../../fixtures/reading-1.json',import.meta.url),'utf8'))
     const review={status:'COMPLETED',durationMs:1234,response:{answers:{Q01:0,Q02:1}},result:{correct:1,total:3,questions:[{questionId:'Q01',correct:true,selectedOption:0,correctOption:0,explanation:'Evidence one'},{questionId:'Q02',correct:false,selectedOption:1,correctOption:0,explanation:'Evidence two'},{questionId:'Q03',correct:false,selectedOption:null,correctOption:0,explanation:'Evidence three'}]}}
     const html=renderToStaticMarkup(createElement(ReadingResults,{session:{taskNumber:1,content:fixture.exercises[0].content},review,images:{},onHome:()=>{},copy:async()=>{},copyStatus:'',fallback:''}))
-    for(const text of ['1 / 3 correct','1 correct · 1 incorrect · 1 unanswered','Q01 · Correct','Q02 · Incorrect','Q03 · Unanswered','Your answer: Wednesday','Correct answer: Tuesday','Evidence three','Synthetic Part 1 passage']) assert.ok(html.includes(text))
+    for(const text of ['Raw score','1 / 3','Total questions','Incorrect and unanswered','Question 2','Question 3','My answer: Wednesday','Unanswered','Synthetic Part 1 passage','aria-expanded="false"']) assert.ok(html.includes(text))
+    assert.ok(!html.includes('Evidence three')); assert.ok(!html.includes('Question 1</strong>'))
+    assert.equal(html.split('Synthetic Part 1 passage').length-1,1)
     assert.ok(html.indexOf('Return to homepage')<html.indexOf('Copy for ChatGPT'))
   }finally{await vite.close()}
 })

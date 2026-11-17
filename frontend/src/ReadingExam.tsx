@@ -1,9 +1,10 @@
+import ReadingResults from './ReadingResults'
 import { useEffect, useState } from 'react'
 import { api, formatTime } from './practice'
 import { useAttempt } from './useAttempt'
 import AttemptDialog from './AttemptDialog'
 import { Passage, QuestionGroups } from './ReadingContent'
-import { partNames, resultCounts } from './reading'
+import { partNames } from './reading'
 import type { ReadingSession, ReadingResponse, ReadingReview } from './reading'
 
 /** Decode all controlled assets before mounting the timed examination. */
@@ -54,17 +55,4 @@ export function ReadingAttempt({session,images,onHome}:{session:ReadingSession;i
   </div>
 }
 
-export function ReadingResults({session,review,images,onHome,copy,copyStatus,fallback}:{session:Pick<ReadingSession,'taskNumber'|'content'>;review:ReadingReview;images:Record<string,string>;onHome:()=>void;copy:()=>Promise<void>;copyStatus:string;fallback:string}) {
-  const title=`Reading Part ${session.taskNumber} — ${partNames[session.taskNumber-1]}`
-  const questions=session.content.questionGroups.flatMap(group=>group.questions)
-  const counts=resultCounts(review)
-    return <main className="reading-results"><h1>{title}</h1><h2>{review.result.correct} / {review.result.total} correct</h2><p>{counts.correct} correct · {counts.incorrect} incorrect · {counts.unanswered} unanswered · {formatTime(review.durationMs)} actual duration</p>
-      <div className="reading-columns"><section className="question-panel" aria-label="Original passage"><Passage blocks={session.content.passage} images={images}/></section><section className="question-panel" aria-label="Answer review">
-        {review.result.questions.map(result=>{
-          const q=questions.find(q=>q.id===result.questionId)!
-          const group=session.content.questionGroups.find(g=>g.questions.some(item=>item.id===q.id))!
-          const status=result.selectedOption==null?'Unanswered':result.correct?'Correct':'Incorrect'
-          return <article className={`answer-review ${status.toLowerCase()}`} key={q.id}><h3>{q.id} · {status}</h3><p>{q.prompt ?? group.text?.replace(/\{\{(Q\d{2})\}\}/g, '[$1]')}</p><p>Your answer: {result.selectedOption==null?'Unanswered':q.options[result.selectedOption]}</p><p>Correct answer: {q.options[result.correctOption]}</p><p>{result.explanation}</p></article>
-        })}
-      </section></div><div className="writing-result-actions"><button onClick={onHome}>Return to homepage</button><button className="navy-button" onClick={()=>void copy()}>Copy for ChatGPT</button></div><p role="status">{copyStatus}</p>{fallback && copyStatus!=='Copied' && <textarea readOnly aria-label="Evaluation context" value={fallback}/>}</main>
-}
+export { default as ReadingResults } from './ReadingResults'
