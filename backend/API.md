@@ -167,3 +167,17 @@ Flyway V2 adds `practice_session` and `practice_attempt`; previous migrations/im
 Recording names include the system-local date, bounded exercise ID, attempt number and UUID, under an internal package directory. Media saves stage bytes and a journal before installation, then commit metadata. Failures compensate files; restart removes journaled uncommitted recordings and verifies committed audio hashes. Import recovery explicitly leaves media journals for media recovery. Unjournaled recordings are preserved, never automatically served. Exports are written to temporary ZIPs then moved atomically to random managed IDs. Back up the complete data root with the application stopped.
 
 WebM framing references: [WebM container guidelines](https://www.webmproject.org/docs/container/) and [Matroska elements](https://www.matroska.org/technical/elements.html).
+
+Speaking foundation (Task 08A): Tasks 1/2/6/7 evaluation text is concise original prompt/alternatives plus mode and human-readable preparation/speaking durations. Context response fields and separate audio assets are unchanged. No new draft or capture endpoint is introduced.
+
+
+## Speaking audio conversion refinement (Task 08A)
+
+The original WebM bytes, audio URL, hashes and completed attempt remain unchanged. Successful multipart audio submission queues a separate local FFmpeg conversion; its response still acknowledges only the original durable save. Derived mono AAC audio at 64 kbps is installed atomically as a sibling `.m4a` with the original filename stem. Conversion uses no audio filters, silence removal, enhancement or trimming. A single local worker and per-attempt status prevent concurrent/repeated conversion; existing nonempty sidecars are reused across restarts. Failed partial output is removed; original saving is never rolled back by conversion failure.
+
+- `GET /api/attempts/{id}/audio-conversion`: completed audio attempts only. Returns `{status,message,audioUrl}`; status is QUEUED, CONVERTING, READY, FAILED or UNAVAILABLE. For a legacy recording without a sidecar/status, queues conversion automatically. READY includes `/api/attempts/{id}/audio?format=m4a`; otherwise audioUrl is null.
+- `POST /api/attempts/{id}/audio-conversion`: retry a failed/unavailable conversion. Queued/running/ready requests are idempotent.
+- `GET /api/attempts/{id}/audio?format=m4a`: controlled M4A resource (`audio/mp4`), 404 until ready. Omitted format or `format=webm` preserves original WebM behavior. Browser range playback remains supported.
+- Existing `POST /api/reveal` with kind AUDIO prefers the M4A sidecar when present, otherwise the original WebM. Copy for ChatGPT output is unchanged.
+
+FFmpeg is an external local executable, discovered on PATH and usual Homebrew paths, or configured with `celpip.ffmpeg` as an executable path. If missing, install using `brew install ffmpeg`, then retry conversion; no restart is required for normal discovery. Conversion has a 120-second timeout and fixed actionable errors. No external service, Java dependency or database migration is added. The AAC sidecar is a derived file; the original WebM remains authoritative.

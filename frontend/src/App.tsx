@@ -1,3 +1,6 @@
+import SpeakingExam from './SpeakingExam';
+import { prepareMicrophone, speakingTasks } from './speaking';
+import type { Microphone, SpeakingSession } from './speaking';
 import ReadingExam from './ReadingExam';
 import ReadingRecovery from './ReadingRecovery';
 import { readReadingRecovery } from './reading';
@@ -104,6 +107,7 @@ const pages: Record<string, string> = {
 const currentPage = () => window.location.hash.replace(/^#\/?/, "");
 
 export default function App() {
+  const [speaking, setSpeaking] = useState<{session:SpeakingSession;mic:Microphone}>();
   const [session, setSession] = useState<Session | ReadingSession>();
   const [readingRecovery, setReadingRecovery] = useState(readReadingRecovery);
   const [recovery, setRecovery] = useState(readRecovery);
@@ -121,12 +125,22 @@ export default function App() {
     else heading.current?.focus();
   }, [page]);
 
-  function home() { setSession(undefined); setRecovery(undefined); setReadingRecovery(undefined); window.location.hash = '/'; setPage(''); }
-  async function start(packageId: string, mode: Mode) {
+  function home() { setSpeaking(undefined); setSession(undefined); setRecovery(undefined); setReadingRecovery(undefined); window.location.hash = '/'; setPage(''); }
+  async function start(packageId: string, mode: Mode, module: string, tasks: number[]) {
+    if(module === 'SPEAKING') {
+      if(tasks.length !== 1 || !speakingTasks.includes(tasks[0])) throw Error('This Speaking task is pending.')
+      const mic = await prepareMicrophone()
+      try {
+        const active = await api<SpeakingSession>('/sessions','POST',{packageId,mode})
+        setSpeaking({session:active,mic})
+      } catch { mic.release(); throw Error('Could not start the Speaking session. Check the local server. A lost response may leave an interrupted attempt; starting again creates a new attempt.') }
+      return
+    }
     const started = await api<Session & {timing: {module:string;answerSeconds:number}}>('/sessions', 'POST', { packageId, mode });
     try { sessionStorage.setItem(started.timing.module === 'READING' ? 'celpip-reading-recovery' : 'celpip-writing-recovery', JSON.stringify({ sessionId: started.sessionId, attemptId: started.attemptId, response: started.timing.module === 'READING' ? {answers:{}} : started.taskNumber === 2 ? { text: '', choice: null } : { text: '' } })); } catch { /* Server drafts still persist. */ }
     setSession(started);
   }
+  if (speaking) return <SpeakingExam session={speaking.session} mic={speaking.mic} onHome={home} />;
   if (session) return 'passage' in session.content ? <ReadingExam session={session as ReadingSession} onHome={home} /> : <WritingExam session={session as Session} onHome={home} />;
   if (readingRecovery) return <ReadingRecovery recovery={readingRecovery} onHome={home} />;
   if (recovery) return <WritingRecovery recovery={recovery} onHome={home} />;

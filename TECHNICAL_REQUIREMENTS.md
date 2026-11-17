@@ -208,7 +208,7 @@ Initial status: repository created/opened by learner; code, runtime, browser rec
 |---|---|---|
 | 0. Project initialization (Task 01) | COMPLETE | Both builds, backend context test, frontend typecheck/lint, HTTP readiness and two consecutive restarts passed; unfamiliar listener refused |
 | 1. Backend | COMPLETE | Task 03 backend acceptance passed: 166 tests, packaged build, scoped media/export APIs and local script checks. Browser capture/countdowns/playback remain Phase 3 integration checks |
-| 2. Frontend | IN PROGRESS | Tasks 04–05 COMPLETE and approved. Task 06 Writing COMPLETE and visually approved. Task 07 Reading and import/evaluation refinements COMPLETE and approved. Speaking and history interfaces remain pending |
+| 2. Frontend | IN PROGRESS | Tasks 04–05 COMPLETE and approved. Task 06 Writing COMPLETE and visually approved. Task 07 Reading and import/evaluation refinements COMPLETE and approved. Task 08A Speaking 1/2/6/7 implemented; Task 2 Exam user-tested. M4A refinement implemented; user verification pending. Speaking 3/4/5/8 and history remain pending |
 | 3. Integration/test | NOT STARTED | Await frontend implementation |
 | 4. Polish/launch | NOT STARTED | Await integration gate |
 
@@ -593,3 +593,29 @@ Task 07 import/evaluation refinements: JSON upload/paste detects image reference
 Workflow preference for subsequent tasks: focus on implementation and run only typecheck, lint and production build for integrity. Do not run browser automation, manual browser checks or lengthy additional tests unless explicitly requested. The user tests functionality and supplies feedback. Backend changes may be compiled/packaged with tests skipped to update the local running server.
 
 Task 07 final refinements explicitly approved by the user before Task 08A. Authorized commit includes Reading, automatic image mapping and concise evaluation exports.
+
+
+### Task 08A — Speaking recording foundation (approved)
+
+Task 07 final Reading/import/evaluation refinements were explicitly approved, committed as `9a07aed40fdc011858a219e10b7b7691a81df1c0`, pushed and remote-verified before Speaking implementation.
+
+Only Speaking Tasks 1, 2, 6 and 7 enable Start. The existing Start confirmation requests microphone permission and verifies WebM/Opus support before creating a session or revealing any prompt. Backend session timings remain authoritative: 1=30/90, 2=30/60, 6=60/60, 7=30/90 seconds. Both Task 6 alternative instructions remain visible without an electronic selection. The shared navy interface adds adjacent preparation/recording stage cards, actual microphone level/status and recording status. Existing deadline timers drive automatic transitions in Timed/Exam; Practice uses unlimited preparation and manual recording controls. Audible cues have a visible fallback if audio cannot play.
+
+`Microphone` manages MediaRecorder WebM/Opus capture, analyser, audio cues and track/context cleanup. Capture uses one-second chunks with a 50 MiB guard. Final audio is assembled only after recorder stop/data delivery. Phase locks prevent duplicate transitions/uploads; uncertain advance responses reconcile through the session endpoint. Upload retries preserve the same Blob and measured integer duration; success is displayed only after backend saved acknowledgement. Microphone/device loss, recording errors, empty audio and unreliable suspension interrupt the attempt. Same-tab unsaved audio survives a failed upload in memory, but cannot survive a reload/crash. Browser unload warns and sends best-effort interruption; server restart retains its existing interruption recovery.
+
+Speaking reuses the shared exit dialog. No recording-draft endpoint is invented: incomplete recording can only be abandoned/interrupted. A finished recording with an unsuccessful upload can be saved by retrying from the exit dialog or main controls. A successful result offers actual prep/speaking durations, stored audio playback, Show in Finder, white Return to homepage and navy Copy for ChatGPT. Evaluation for these four tasks contains only the original prompt/alternatives, mode and readable preparation/speaking timings; the user attaches original audio separately. Backend contracts and schemas are unchanged; no dependencies, transcription, AI, Speaking 3/4/5/8 or history UI were added.
+
+Verification: frontend typecheck, lint (zero warnings) and production build pass. Backend packaging with `-DskipTests` compiles the evaluation-text refinement; no test suite or browser checks were run, following the user's workflow preference. Microphone permission/denial, real Chrome WebM bytes, audio levels/cues, timers/throttling/suspension, device loss, upload retry, playback and Finder require the user's browser verification. Task 08A remains uncommitted until user approval. Dedicated servers remain on 127.0.0.1:47321/47322.
+
+
+### Task 08A — Audio format refinement (approved)
+
+The user successfully tested Speaking Task 2 in Exam mode. In their actual ChatGPT upload, the WebM was not interpreted successfully but the same recording converted to M4A/AAC was understood. This establishes compatibility for that user test, not guaranteed interpretation of every recording; no reduction in token consumption has been established or claimed.
+
+Browser microphone, MediaRecorder WebM/Opus capture and timer behavior remain unchanged. Backend original saving now independently queues mono AAC conversion at 64 kbps through local FFmpeg. Complete audio is retained, including pauses, silence and hesitations; no denoising, silence removal, enhancement or trimming is applied. Original WebM is never deleted, overwritten or replaced. Derived `.m4a` shares the filename stem beside the original; a single worker/status map prevents duplicate conversion, uses temporary output and atomic installation, reuses ready sidecars and permits explicit retry without invalidating completed attempts. Existing WebM recordings can convert lazily through the conversion-status endpoint.
+
+Result playback and Finder prefer ready M4A, labelled for ChatGPT evaluation. Conversion queued/running/unavailable/failure states and retry are separate from successfully saved-original status. Copy for ChatGPT is unchanged. API additions are documented in backend/API.md; no database change, external API, paid service or new JavaScript/Java dependency.
+
+FFmpeg was not found in the development environment. Required installation: `brew install ffmpeg`. Installation was not performed. Frontend typecheck, lint and production build passed; backend compiled/packaged with tests skipped. No browser/manual testing or additional tests performed. Automatic conversion and resulting audio require user verification after FFmpeg installation. Both dedicated local servers were restarted. Task 08A and this refinement remain uncommitted pending user approval.
+
+Task 08A approved: user verified Speaking Task 2 in Exam mode, recording, automatic M4A conversion and actual ChatGPT audio upload. This does not establish verification of other tasks, device failures, denied permissions, suspension or upload/conversion failure paths. Approved for commit before Task 08B.

@@ -186,3 +186,17 @@ select:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
 .answer-review.incorrect { border-left-color: #B91C1C; }
 .answer-review.unanswered { border-left-color: #B45309; }
 @media (max-width:760px) { .reading-columns {grid-template-columns:1fr;padding:16px;gap:16px} .reading-columns .question-panel {max-height:55dvh} .reading-results {padding:16px} .reading-exam .exam-actions {flex-wrap:wrap} }
+
+.speaking-main { width: calc(100% - 64px); max-width: 1120px; margin: 32px auto; flex: 1; }
+.speaking-question, .speaking-timer, .microphone-status { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 32px; }
+.speaking-question { white-space: pre-wrap; font-size: 20px; line-height: 1.7; }
+.speaking-timers { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; margin: 24px 0; }
+.speaking-timer { text-align: center; }
+.speaking-timer h2 { margin: 0 0 16px; font-size: 18px; }
+.speaking-timer strong { display: block; font-size: 36px; font-variant-numeric: tabular-nums; }
+.speaking-timer span { display: block; margin-top: 8px; }
+.speaking-timer.active { border-color: var(--primary); background: var(--soft-accent); box-shadow: inset 0 0 0 1px var(--primary); }
+.microphone-status meter { width: 100%; max-width: 320px; height: 24px; }
+.recording-status { color: #B91C1C; font-weight: 700; }
+.writing-result audio { width: 100%; margin: 16px 0; }
+@media(max-width:600px) { .speaking-main {width:calc(100% - 32px);margin:16px auto} .speaking-timers {gap:16px} .speaking-timer,.speaking-question,.microphone-status {padding:16px} }
