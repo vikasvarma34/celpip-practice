@@ -208,7 +208,7 @@ Initial status: repository created/opened by learner; code, runtime, browser rec
 |---|---|---|
 | 0. Project initialization (Task 01) | COMPLETE | Both builds, backend context test, frontend typecheck/lint, HTTP readiness and two consecutive restarts passed; unfamiliar listener refused |
 | 1. Backend | COMPLETE | Task 03 backend acceptance passed: 166 tests, packaged build, scoped media/export APIs and local script checks. Browser capture/countdowns/playback remain Phase 3 integration checks |
-| 2. Frontend | IN PROGRESS | Task 04 COMPLETE and visually approved. Task 05 import/ready implemented, awaiting approval; examination and history interfaces remain pending |
+| 2. Frontend | IN PROGRESS | Tasks 04–05 COMPLETE and approved. Task 06 Writing COMPLETE and visually approved. Reading, Speaking and history interfaces remain pending |
 | 3. Integration/test | NOT STARTED | Await frontend implementation |
 | 4. Polish/launch | NOT STARTED | Await integration gate |
 
@@ -551,3 +551,26 @@ Task 04 approved: primary navy #243B60; hover #304D78, shared by application bra
 Task 05: shared module-scoped upload/drop/paste interface with explicit image path mapping, loading lock, backend errors and duplicate reuse. Neutral ready card shows only module/task/count and mode selection; Start remains disabled and no session/content/image endpoints are called. Frontend typecheck/lint/build passed; 37 isolated ImportIntegrationTest cases passed covering ZIP/JSON/paste, invalid/duplicate/mismatched imports and neutral responses. Automated browser interaction/visual review remains pending. Task 04 commit 73ea54c25742fd02a5c985a24a9bab358807844f pushed and remote-verified before implementation. Task 05 is uncommitted pending user approval.
 
 Task 05 review follow-up: user confirmed Reading and Speaking loading works. Renamed visible “Import exercise” actions/headings to “Load exercise”; moved Practice mode heading inside a padded radio-group panel to avoid border overlap. Start remains intentionally disabled pending examination UI. No commit/push.
+
+
+### Task 06 — Writing interface (complete; visually approved)
+
+Task 05 commit `905b3cdf12ef7b793437d63987efb2c98597068c` was already on local and remote main before Task 06; no duplicate commit was created. This supersedes earlier Task 05 pending-commit notes.
+
+Writing alone now enables explicit Start from the neutral ready card. `POST /api/sessions` is called only on that click; no question/content fetch occurs beforehand. Both canonical Writing tasks share a 40/60 question/editor layout using the approved navy palette. Task 2 saves the A/B choice with the original text. Reading and Speaking execution remain disabled; homepage design and backend contracts are unchanged.
+
+Reusable `usePracticeTimer` uses a monotonic start/deadline and backend session timing (1620/1560 seconds). Practice shows elapsed time; Timed/Exam expire automatically, including after delayed visibility updates. Detected suspension/clock discontinuity interrupts instead of extending a fresh attempt. Drafts debounce for 600 ms and serialize; submission drains prior writes, freezes the exact text/choice/duration for idempotent retries, and rejects further draft writes. Manual submission and abandonment require confirmation. Reloaded work is shown as interrupted recovery, with the latest same-tab sessionStorage text and durable server drafts retained; it never silently resumes as fresh practice. Browser close/reload interruption delivery is best effort, with recovery reconciliation on reload and the existing server restart recovery as fallback.
+
+The shared counter counts nonempty Unicode-whitespace-delimited tokens (hyphenated words remain one token); 150–200 is guidance only. The result displays the saved original text, survey choice, backend word count and measured duration, with evaluation-context copying. No scores/corrections are generated. Basic spell-check is enabled; autocorrection/autocapitalization/autocomplete and known grammar-extension hints are disabled. Browser/OS extensions cannot be fully controlled.
+
+Verification: frontend `npm run typecheck`, `npm run lint`, `npm test` (16 passing tests), `npm run test:integration` (1 passing isolated real-backend scenario covering both tasks in all three modes, plus empty expiry payloads/interruption), and production build. Tests cover canonical rendering, Unicode counts, absolute deadlines after skipped ticks, ordered drafts, failed drafts/submissions, frozen retries, manual/expiry duplicate prevention, exact response/choice persistence, evaluation context and neutral metadata. Integration launches a temporary backend on an ephemeral loopback port with a canonical temporary data directory; it never imports into real preparation storage. `scripts/restart-local.sh` also passed all 166 existing backend tests and restarted both dedicated servers.
+
+Chrome was opened by the restart script. Automated browser interaction is blocked by the unavailable Chrome connector/native inspection timeout; actual visual layout, keyboard interactions, native spell-check/clipboard and end-to-end browser expiry/reload remain for manual inspection. Unit clock/queue checks and server-rendered component checks are not claimed as browser automation. No dependencies were added, and no Task 06 commit/push is permitted until the user approves the interface. Reading, Speaking, history and subsequent feature work have not begun.
+
+Task 06 visual follow-up: added a 16px wrapping gap between confirmation buttons and result actions. Saved-response actions now place the white Return to homepage button first, followed by navy Copy for ChatGPT, including recovered completed responses. Awaiting visual approval; no commit/push.
+
+Task 06 review follow-up: ready actions have a 16px gap. Start practice now opens a keyboard-accessible confirmation dialog; only Start test creates the Writing session and begins timing. Cancel leaves the exercise ready with no question retrieval or session creation.
+
+Task 06 exit follow-up: added Exit without saving alongside Save draft and exit in the confirmation dialog. It cancels the pending debounce, stops queued draft writes, waits for any already-running write, and marks the attempt interrupted without a final draft save. The dialog explicitly states that earlier autosaved drafts remain stored; this does not delete historical or autosaved data.
+
+Task 06 approved for commit, including spacing, result action order, Start confirmation and Exit without saving refinements. Browser automation limitations recorded above remain explicit.

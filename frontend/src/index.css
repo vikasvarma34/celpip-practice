@@ -115,3 +115,51 @@ textarea { display: block; resize: vertical; width: 100%; padding: 16px; border:
 .mode-option input { accent-color: var(--primary); flex-shrink: 0; width: 18px; height: 18px; margin: 0; }
 .mode-option span { min-width: 0; line-height: 1.5; }
 .import-error { background: var(--surface); border-left: 4px solid var(--primary); padding: 16px; }
+
+/* Writing uses the shared approved palette, with no homepage chrome. */
+.writing-exam { min-height: 100dvh; display: flex; flex-direction: column; }
+.exam-header { background: var(--primary); color: var(--surface); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.exam-header h1 { font-size: 22px; margin: 0; letter-spacing: -.3px; }
+.exam-header [role="timer"] { text-align: right; flex-shrink: 0; }
+.exam-header [role="timer"] span { display: block; font-size: 13px; color: var(--target-label); }
+.exam-header strong { font-size: 28px; font-variant-numeric: tabular-nums; }
+.exam-columns { width: 100%; max-width: 1600px; margin: 0 auto; padding: 24px 32px; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 24px; flex: 1; min-height: 0; }
+.question-panel, .editor-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; min-width: 0; }
+.question-panel { max-height: calc(100dvh - 224px); overflow-y: auto; overflow-wrap: anywhere; line-height: 1.7; }
+.question-panel p, .question-panel li { white-space: pre-wrap; }
+.question-panel h2 { margin-top: 0; font-size: 22px; }
+.question-panel li + li { margin-top: 16px; }
+.question-panel fieldset { border: 1px solid var(--border); border-radius: 8px; padding: 16px; min-width: 0; }
+.survey-option { display: flex; gap: 16px; align-items: baseline; padding: 16px 0; cursor: pointer; }
+.survey-option input { accent-color: var(--primary); flex-shrink: 0; }
+.survey-option span { white-space: pre-wrap; }
+.editor-panel { display: flex; flex-direction: column; gap: 16px; }
+.editor-panel > label { font-size: 19px; font-weight: 650; }
+.editor-panel textarea { flex: 1; min-height: 320px; resize: none; margin: 0; color: var(--primary); background: var(--surface); line-height: 1.7; }
+.editor-status { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; font-size: 14px; color: var(--secondary); }
+.editor-panel small { color: var(--secondary); line-height: 1.5; }
+.exam-actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 32px; border-top: 1px solid var(--border); background: var(--surface); }
+.exam-actions .navy-button, .exam-dialog .navy-button { margin-top: 0; }
+.exam-error { margin: 0; padding: 16px 32px; background: var(--soft-accent); }
+.dialog-shade { position: fixed; inset: 0; background: rgb(0 0 0 / 40%); display: grid; place-items: center; padding: 24px; z-index: 20; }
+.exam-dialog { background: var(--surface); padding: 32px; border-radius: 16px; max-width: 520px; box-shadow: 0 16px 40px rgb(0 0 0 / 20%); }
+.exam-dialog p { line-height: 1.6; }
+.exam-dialog-actions, .writing-result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.writing-result-actions { margin-top: 24px; }
+.writing-result-actions .navy-button { margin-top: 0; }
+.writing-result { max-width: 960px; margin: 40px auto; padding: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; }
+.original-response { font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; padding: 24px; background: var(--page-background); border: 1px solid var(--border); border-radius: 8px; }
+@media (max-width: 760px) {
+  .exam-header { padding: 16px; align-items: start; }
+  .exam-header h1 { font-size: 18px; }
+  .exam-columns { grid-template-columns: 1fr; padding: 16px; gap: 16px; }
+  .question-panel, .editor-panel { padding: 24px; }
+  .question-panel { max-height: 45dvh; }
+  .editor-panel textarea { min-height: 360px; }
+  .exam-actions { padding: 16px; }
+  .writing-result { margin: 16px; padding: 24px; }
+}
+
+.ready-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 24px; }
+.ready-actions .navy-button { margin-top: 0; }
+.ready-actions > p { flex-basis: 100%; margin: 0; }
