@@ -43,6 +43,7 @@ public class ImportService {
         try (var paths = Files.list(storage.root.resolve("images"))) {
             for (Path p : paths.toList()) {
                 if (Files.isSymbolicLink(p)) throw new IOException("Unsafe managed image directory.");
+                if (p.getFileName().toString().equals(".DS_Store") && Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS)) continue;
                 if (!packages.existsByStorageKey(p.getFileName().toString())) throw new IOException("Unrecognized image directory preserved. Restore the complete database or inspect storage before restarting.");
             }
         }

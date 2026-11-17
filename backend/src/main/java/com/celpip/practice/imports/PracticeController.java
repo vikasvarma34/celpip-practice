@@ -11,8 +11,9 @@ import static com.celpip.practice.imports.PracticeService.parse;
 @RestController
 @RequestMapping("/api")
 public class PracticeController {
-    final PracticeService practice;final PracticeMedia media;final EvaluationService evaluation;final AudioConversion conversion;
-    PracticeController(PracticeService practice,PracticeMedia media,EvaluationService evaluation,AudioConversion conversion){this.practice=practice;this.media=media;this.evaluation=evaluation;this.conversion=conversion;}
+    final PracticeService practice;final PracticeMedia media;final EvaluationService evaluation;final AudioConversion conversion;final NativeClipboard clipboard;
+    PracticeController(PracticeService practice,PracticeMedia media,EvaluationService evaluation,AudioConversion conversion,NativeClipboard clipboard){this.practice=practice;this.media=media;this.evaluation=evaluation;this.conversion=conversion;this.clipboard=clipboard;}
+    @GetMapping("/speaking-testing") public java.util.Map<String,Boolean> speakingTesting(){return java.util.Map.of("earlyFinish",practice.testingEarlyFinish);}
     @PostMapping("/sessions") public JsonNode start(@RequestBody String body){return practice.start(parse(body));}
     @GetMapping("/sessions/{id}") public JsonNode session(@PathVariable String id){return practice.view(id);}
     @PostMapping("/sessions/{id}/advance") public JsonNode advance(@PathVariable String id,@RequestBody String body){return practice.advance(id,parse(body));}
@@ -30,6 +31,7 @@ public class PracticeController {
     @GetMapping("/attempts/{id}/evaluation-context") public EvaluationService.Context context(@PathVariable String id,@RequestParam(defaultValue="false")boolean paired){return evaluation.context(id,paired);}
     @PostMapping("/exports") public JsonNode export(@RequestBody String body)throws Exception{return evaluation.export(parse(body));}
     @GetMapping("/exports/{id}") public ResponseEntity<Resource> download(@PathVariable String id)throws Exception{return resource(evaluation.exportPath(id),"application/zip");}
+    @PostMapping("/clipboard") public JsonNode clipboard(@RequestBody String body)throws Exception{return clipboard.copy(parse(body));}
     @PostMapping("/reveal") public JsonNode reveal(@RequestBody String body)throws Exception{return evaluation.reveal(parse(body));}
     @GetMapping("/attempts/{id}/audio") public ResponseEntity<Resource> audio(@PathVariable String id,@RequestParam(defaultValue="webm")String format)throws Exception{ImportProblem.require(java.util.Set.of("webm","m4a").contains(format),"format","Choose webm or m4a.");return resource(format.equals("m4a")?conversion.m4a(id):media.audio(id),format.equals("m4a")?"audio/mp4":"audio/webm");}
     @GetMapping("/attempts/{id}/audio-conversion") public AudioConversion.Status conversion(@PathVariable String id)throws Exception{return conversion.request(id,false);}

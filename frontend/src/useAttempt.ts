@@ -1,3 +1,4 @@
+import { copied as showCopied } from './notifications'
 import { useEffect, useRef, useState } from 'react'
 import { api, clock, ResponseWriter } from './practice'
 import { usePracticeTimer } from './usePracticeTimer'
@@ -68,7 +69,7 @@ export function useAttempt<R, V>(session: {sessionId: string; attemptId: string;
     finally { setSending(false); setConfirm(null) }
   }
   async function copy() {
-    try { const context = await api<{ text: string }>(`/attempts/${session.attemptId}/evaluation-context`); setFallback(context.text); await navigator.clipboard.writeText(context.text); setCopyStatus('Copied') }
+    try { const context = await api<{ text: string }>(`/attempts/${session.attemptId}/evaluation-context`); setFallback(context.text); await navigator.clipboard.writeText(context.text); setCopyStatus('Copied');showCopied('Copied! Ready to paste.') }
     catch { setCopyStatus('Copy failed. You can select the context below if it loaded, or retry.') }
   }
   return { response, latest, draftState, error, locked, sending, review, confirm, setConfirm, copyStatus, fallback, interrupted, limit, time, change, exit, submit, copy }

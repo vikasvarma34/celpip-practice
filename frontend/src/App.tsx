@@ -1,4 +1,4 @@
-import SpeakingExam from './SpeakingExam';
+import SpeakingFlow from './SpeakingFlow';
 import { prepareMicrophone, speakingTasks } from './speaking';
 import type { Microphone, SpeakingSession } from './speaking';
 import ReadingExam from './ReadingExam';
@@ -128,7 +128,7 @@ export default function App() {
   function home() { setSpeaking(undefined); setSession(undefined); setRecovery(undefined); setReadingRecovery(undefined); window.location.hash = '/'; setPage(''); }
   async function start(packageId: string, mode: Mode, module: string, tasks: number[]) {
     if(module === 'SPEAKING') {
-      if(tasks.length !== 1 || !speakingTasks.includes(tasks[0])) throw Error('This Speaking task is pending.')
+      if(!(tasks.join(',') === '3,4' || (tasks.length === 1 && speakingTasks.includes(tasks[0]) && ![3,4].includes(tasks[0])))) throw Error('This Speaking task is pending.')
       const mic = await prepareMicrophone()
       try {
         const active = await api<SpeakingSession>('/sessions','POST',{packageId,mode})
@@ -140,7 +140,7 @@ export default function App() {
     try { sessionStorage.setItem(started.timing.module === 'READING' ? 'celpip-reading-recovery' : 'celpip-writing-recovery', JSON.stringify({ sessionId: started.sessionId, attemptId: started.attemptId, response: started.timing.module === 'READING' ? {answers:{}} : started.taskNumber === 2 ? { text: '', choice: null } : { text: '' } })); } catch { /* Server drafts still persist. */ }
     setSession(started);
   }
-  if (speaking) return <SpeakingExam session={speaking.session} mic={speaking.mic} onHome={home} />;
+  if (speaking) return <SpeakingFlow session={speaking.session} mic={speaking.mic} onHome={home} />;
   if (session) return 'passage' in session.content ? <ReadingExam session={session as ReadingSession} onHome={home} /> : <WritingExam session={session as Session} onHome={home} />;
   if (readingRecovery) return <ReadingRecovery recovery={readingRecovery} onHome={home} />;
   if (recovery) return <WritingRecovery recovery={recovery} onHome={home} />;

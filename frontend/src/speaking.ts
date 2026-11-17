@@ -1,7 +1,7 @@
 import type { Mode } from './practice'
-export type SpeakingSession = {sessionId:string;attemptId:string;taskNumber:number;mode:Mode;stage:string;status:string;timing:{module:string;preparationSeconds:number;answerSeconds:number};content:{prompt:string;alternatives?:string[]}}
-export const speakingTasks = [1,2,6,7]
-export const speakingNames:Record<number,string> = {1:'Giving Advice',2:'Talking about a Personal Experience',6:'Dealing with a Difficult Situation',7:'Expressing Opinions'}
+export type SpeakingSession = {sessionId:string;attemptId:string;taskNumber:number;mode:Mode;stage:string;status:string;timing:{module:string;preparationSeconds:number;answerSeconds:number};content:{prompt:string;alternatives?:string[];image?:string}}
+export const speakingTasks = [1,2,3,4,6,7,8]
+export const speakingNames:Record<number,string> = {1:'Giving Advice',2:'Talking about a Personal Experience',3:'Describing a Scene',4:'Making Predictions',8:'Describing an Unusual Situation',6:'Dealing with a Difficult Situation',7:'Expressing Opinions'}
 export class Microphone {
   stream:MediaStream
   recorder:MediaRecorder
@@ -19,11 +19,13 @@ export class Microphone {
   }
   constructor(stream:MediaStream) {
     this.stream=stream
+    stream.getAudioTracks().forEach(track=>{track.enabled=false})
     this.recorder=new MediaRecorder(stream,{mimeType:'audio/webm;codecs=opus',audioBitsPerSecond:64000})
     this.context=new AudioContext()
     this.source=this.context.createMediaStreamSource(stream)
     this.analyser=this.context.createAnalyser();this.analyser.fftSize=256;this.source.connect(this.analyser)
   }
+  activate() { if(this.closed)throw Error("Microphone is closed.");this.stream.getAudioTracks().forEach(track=>{if(track.readyState!=='live')throw Error("Microphone disconnected.");track.enabled=true}) }
   async cue() {
     try {
       await this.context.resume()

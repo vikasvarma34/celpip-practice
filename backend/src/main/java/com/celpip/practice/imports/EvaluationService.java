@@ -24,10 +24,11 @@ public class EvaluationService {
     }
     public Context context(String id,boolean pair){
         synchronized(practice){StringBuilder text=new StringBuilder();Map<String,Asset> assets=new LinkedHashMap<>();
+            if(pair)text.append("Linked Speaking Tasks 3 and 4. Attach the shared scene image once and both M4A recordings.\n\n");
             for(var a:included(id,pair)){
                 var s=practice.session(a.sessionId);String module=practice.module(a);JsonNode content=practice.visible(a);
                 if(module.equals("READING")||module.equals("WRITING")){
-                    text.append(module.equals("READING")?"Reading part ":"Writing task ").append(a.taskNumber).append("\nPractice mode: ").append(s.mode).append("\nTime taken: ").append(a.durationMs/60000).append(" minutes ").append((a.durationMs/1000)%60).append(" seconds\n\n");
+                    text.append(module.equals("READING")?"Reading part ":"Writing task ").append(a.taskNumber).append("\nPractice mode: ").append(s.mode).append("\nTime taken: ").append(elapsed(a.durationMs)).append("\n\n");
                     if(module.equals("READING")){
                         JsonNode result=parse(a.resultJson);text.append("Raw score: ").append(result.get("correct")).append('/').append(result.get("total")).append("\n\nPassage:\n");
                         for(JsonNode block:content.get("passage")){
@@ -52,12 +53,14 @@ public class EvaluationService {
                         if(content.has("options")){for(JsonNode option:content.get("options"))text.append("Option ").append(option.get("id").stringValue()).append(": ").append(option.get("text").stringValue()).append('\n');text.append("Selected survey option: ");JsonNode choice=response.get("choice");boolean found=false;for(JsonNode option:content.get("options"))if(choice!=null&&!choice.isNull()&&choice.stringValue().equals(option.get("id").stringValue())){text.append(option.get("text").stringValue());found=true;}if(!found)text.append("Not selected");text.append('\n');}
                         text.append("Word count: ").append(parse(a.resultJson).get("wordCount")).append("\n\nMy exact written response:\n").append(response.get("text").stringValue());
                     }
-                }else if(Set.of(1,2,6,7).contains(a.taskNumber)){
-                    text.append("Speaking task ").append(a.taskNumber).append("\nPractice mode: ").append(s.mode)
-                        .append("\nPreparation: ").append(a.preparationMs/60000).append(" minutes ").append((a.preparationMs/1000)%60).append(" seconds")
-                        .append("\nSpeaking: ").append(a.durationMs/60000).append(" minutes ").append((a.durationMs/1000)%60).append(" seconds\n\n")
+                }else if(Set.of(1,2,3,4,6,7,8).contains(a.taskNumber)){
+                    text.append("Speaking task ").append(a.taskNumber).append(" — ").append(switch(a.taskNumber){case 1->"Giving Advice";case 2->"Talking about a Personal Experience";case 3->"Describing a Scene";case 4->"Making Predictions";case 6->"Dealing with a Difficult Situation";case 7->"Expressing Opinions";case 8->"Describing an Unusual Situation";default->"Speaking";}).append("\nPractice mode: ").append(s.mode)
+                        .append("\nPreparation: ").append(elapsed(a.preparationMs))
+                        .append("\nSpeaking: ").append(elapsed(a.durationMs)).append("\n\n")
                         .append(content.get("prompt").stringValue()).append('\n');
+                    if(!s.mode.equals("PRACTICE")&&(a.preparationMs<practice.timing(a).preparationSeconds()*1000L||a.durationMs<practice.timing(a).answerSeconds()*1000L))text.append("Testing: ended early; shortened examination conditions.\n");
                     if(content.has("alternatives"))for(JsonNode alternative:content.get("alternatives"))text.append(alternative.stringValue()).append('\n');
+                    if(content.has("image")&&!pair)text.append("Attach this task's original image and M4A recording for evaluation.\n");
                 }else{
                     text.append(module).append(" task ").append(a.taskNumber).append("\nMode: ").append(s.mode).append("; attempt: ").append(a.sequenceNumber).append("\nSelection/preparation/response (ms): ").append(a.selectionMs).append(" / ").append(a.preparationMs).append(" / ").append(a.durationMs).append("\n");
                     render(content,text);if(a.responseJson!=null){text.append("Original response:\n");render(parse(a.responseJson),text);}if(a.resultJson!=null)render(parse(a.resultJson),text);
@@ -68,6 +71,7 @@ public class EvaluationService {
             }return new Context(text.toString(),List.copyOf(assets.values()));
         }
     }
+    static String elapsed(long ms){long seconds=Math.round(ms/1000.0);return String.format("%02d:%02d",seconds/60,seconds%60);}
     static void render(JsonNode n,StringBuilder out){if(n==null||n.isNull())return;if(n.isObject()){for(var e:n.properties()){out.append(e.getKey()).append(": ");render(e.getValue(),out);}}else if(n.isArray()){for(var e:n)render(e,out);}else out.append(n.isString()?n.stringValue():n.toString()).append('\n');}
     public JsonNode export(JsonNode r) throws IOException {
         fields(r,"request","attemptId","paired");String id=text(r.get("attemptId"),"attemptId");ImportProblem.require(r.get("paired").isBoolean(),"paired","Expected boolean.");boolean pair=r.get("paired").booleanValue();

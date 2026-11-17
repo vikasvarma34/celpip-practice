@@ -36,7 +36,7 @@ public class PracticeMedia {
                 try(var in=audio.getInputStream()){UploadReader.copy(in,upload,maxBytes);}byte[] bytes=Files.readAllBytes(upload);WebmAudio.validate(bytes,audio.getContentType());
                 String audioHash=UploadReader.sha(bytes),fingerprint=UploadReader.sha((audioHash+":"+duration).getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 if(a.status.equals("COMPLETED")){state(fingerprint.equals(a.submissionHash));return receipt(a);}
-                practice.active(a);state(a.stage.equals("RECORDING"));if(!practice.session(a.sessionId).mode.equals("PRACTICE"))state(duration>=practice.timing(a).answerSeconds()*1000L);
+                practice.active(a);state(a.stage.equals("RECORDING"));if(!practice.session(a.sessionId).mode.equals("PRACTICE")&&!practice.testingEarlyFinish)state(duration>=practice.timing(a).answerSeconds()*1000L);
                 String exercise=a.exerciseId.substring(0,Math.min(70,a.exerciseId.length()));String filename=LocalDate.now(ZoneId.systemDefault())+"_"+exercise+"_Attempt"+a.sequenceNumber+"_"+a.id+".webm";
                 String relative="recordings/"+practice.pack(practice.session(a.sessionId)).storageKey+"/"+filename;target=safe(relative,false);Files.createDirectories(target.getParent());
                 Files.writeString(stage.resolve("journal.json"),JSON.writeValueAsString(Map.of("attemptId",a.id,"path",relative)),StandardOpenOption.CREATE_NEW);

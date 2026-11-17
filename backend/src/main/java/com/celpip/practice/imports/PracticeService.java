@@ -13,6 +13,7 @@ import static com.celpip.practice.imports.ContractValidator.*;
 
 @Service
 public class PracticeService {
+    @org.springframework.beans.factory.annotation.Value("${celpip.speaking.testing-early-finish:false}") boolean testingEarlyFinish;
     final SessionRepository sessions;
     final AttemptRepository attempts;
     final PackageRepository packages;
@@ -94,7 +95,7 @@ public class PracticeService {
             a.automaticChoice=choice==null;a.choice=choice==null?"A":choice;a.selectionMs=elapsed;a.stage="PREPARATION";
         } else {
             state(action.equals("START_RECORDING")&&a.stage.equals("PREPARATION"));state(r.get("choice").isNull()&&!r.get("timeout").booleanValue());
-            if(!s.mode.equals("PRACTICE"))state(elapsed>=timing(a).preparationSeconds()*1000L);
+            if(!s.mode.equals("PRACTICE")&&!testingEarlyFinish)state(elapsed>=timing(a).preparationSeconds()*1000L);
             a.preparationMs=elapsed;a.stage="RECORDING";
         }
         attempts.saveAndFlush(a);return view(id);

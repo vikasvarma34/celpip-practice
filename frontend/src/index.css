@@ -200,3 +200,44 @@ select:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
 .recording-status { color: #B91C1C; font-weight: 700; }
 .writing-result audio { width: 100%; margin: 16px 0; }
 @media(max-width:600px) { .speaking-main {width:calc(100% - 32px);margin:16px auto} .speaking-timers {gap:16px} .speaking-timer,.speaking-question,.microphone-status {padding:16px} }
+
+/* Shared scene remains uncropped while stage controls stay beside it on desktop. */
+.speaking-main.image-speaking { max-width: 1600px; display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 24px; align-items: start; }
+.image-speaking .speaking-question { grid-row: span 3; min-width: 0; padding: 16px 24px; font-size: 18px; }
+.image-speaking .speaking-question > p { margin: 0 0 16px; }
+.speaking-scene { display: block; text-align: center; font-size: 14px; }
+.speaking-scene img { display: block; width: 100%; max-height: calc(100dvh - 280px); object-fit: contain; height: auto; margin: 0 auto 8px; }
+.image-speaking .speaking-timers { gap: 16px; margin: 0; }
+.image-speaking .speaking-timer { padding: 16px 8px; }
+.image-speaking .speaking-timer h2 { font-size: 16px; }
+.image-speaking .microphone-status { padding: 16px; }
+@media(max-width:900px) { .speaking-main.image-speaking {grid-template-columns:1fr} .image-speaking .speaking-question {grid-row:auto} .speaking-scene img {max-height:50dvh} }
+
+.speaking-timers {grid-template-columns:1fr}
+.speaking-result-card {border:1px solid var(--border);border-radius:16px;padding:24px;margin:24px 0;background:var(--surface)}
+.speaking-result-card h2 {background:var(--soft-accent);padding:16px;border-radius:8px;margin:0 0 16px}
+.attachment-controls {display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin:16px 0}
+.secondary-path {font-size:14px}
+
+.writing-result.speaking-result-card {margin:40px auto}
+
+.speaking-controls {display:flex;flex-direction:column;justify-content:center;gap:24px;min-width:0}
+.speaking-controls .speaking-timers {margin:0}
+.image-speaking .speaking-question {grid-row:auto}
+.image-speaking .speaking-controls {align-self:stretch;min-height:420px}
+.speaking-main.image-speaking {grid-template-columns:minmax(0,1fr) 336px}
+.speaking-main:not(.image-speaking) .speaking-controls {max-width:640px;margin:24px auto}
+.microphone-status.recording-panel {min-height:300px;padding:32px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;box-shadow:0 8px 24px rgb(var(--shadow-color) / 5%)}
+.microphone-emblem {width:80px;height:80px;border-radius:50%;background:var(--soft-accent);color:var(--primary);display:grid;place-items:center}
+.recording-panel p {margin:0}
+.recording-panel .recording-status {display:flex;align-items:center;gap:8px;font-size:18px}
+.recording-dot {width:8px;height:8px;border-radius:50%;background:currentColor}
+.voice-meter {height:80px;display:flex;align-items:center;justify-content:center;gap:6px;width:100%}
+.voice-meter span {display:block;width:7px;border-radius:8px;background:var(--border);transition:height 90ms linear,background-color 90ms linear}
+.voice-meter span.has-signal {background:var(--primary)}
+.voice-meter-label {color:var(--secondary);font-size:14px;line-height:1.5}
+@media(max-width:900px){.speaking-main.image-speaking {grid-template-columns:1fr}.image-speaking .speaking-controls {min-height:0}.microphone-status.recording-panel {min-height:280px}}
+@media(prefers-reduced-motion:reduce){.voice-meter span {transition:none}}
+
+.copy-toast {position:fixed;bottom:24px;left:24px;z-index:100;background:var(--primary);color:var(--surface);border-radius:12px;padding:16px 24px;box-shadow:0 8px 24px rgb(0 0 0 / 16%);max-width:calc(100vw - 48px);pointer-events:none}
+.copy-toast.hidden {padding:0;visibility:hidden}

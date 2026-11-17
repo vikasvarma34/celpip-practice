@@ -1,3 +1,4 @@
+import { copied as showCopied } from './notifications'
 import { useEffect, useState } from 'react'
 import { api } from './practice'
 import { ReadingResults } from './ReadingExam'
@@ -25,7 +26,7 @@ export default function ReadingRecovery({recovery,onHome}:{recovery:ReadingRecov
   },[recovery.sessionId,recovery.attemptId,retry])
   function home() { sessionStorage.removeItem('celpip-reading-recovery'); onHome() }
   async function copy() {
-    try {const context=await api<{text:string}>(`/attempts/${recovery.attemptId}/evaluation-context`);setFallback(context.text);await navigator.clipboard.writeText(context.text);setCopied('Copied')}catch{setCopied('Copy failed. Retry or select the context below.')}
+    try {const context=await api<{text:string}>(`/attempts/${recovery.attemptId}/evaluation-context`);setFallback(context.text);await navigator.clipboard.writeText(context.text);setCopied('Copied');showCopied('Copied! Ready to paste.')}catch{setCopied('Copy failed. Retry or select the context below.')}
   }
   if(review?.status==='COMPLETED') {
     const images:Record<string,string>={}

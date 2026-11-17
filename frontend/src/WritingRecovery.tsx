@@ -1,3 +1,4 @@
+import { copied as showCopied } from './notifications'
 import { useCallback, useEffect, useState } from 'react'
 import { api, formatTime } from './practice'
 import type { Review } from './practice'
@@ -31,7 +32,7 @@ export default function WritingRecovery({ recovery, onHome }: { recovery: Recove
       const text = saved ? (await api<{ text: string }>(`/attempts/${recovery.attemptId}/evaluation-context`)).text : response.text
       setContext(text)
       await navigator.clipboard.writeText(text)
-      setCopied('Copied')
+      setCopied('Copied');showCopied('Copied! Ready to paste.')
     } catch { setCopied('Copy failed. Select the text below to copy, or retry.') }
   }
   return (

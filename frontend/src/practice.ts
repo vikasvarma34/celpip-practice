@@ -51,3 +51,5 @@ export function readRecovery(): Recovery | undefined {
     if (value && typeof value.sessionId === 'string' && typeof value.attemptId === 'string' && typeof value.response?.text === 'string') return value
   } catch { /* No recoverable local draft. */ }
 }
+
+export function formatDuration(ms:number) { const seconds=Math.round(Math.max(0,ms)/1000);return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}` }
