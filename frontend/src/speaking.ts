@@ -1,7 +1,8 @@
 import type { Mode } from './practice'
-export type SpeakingSession = {sessionId:string;attemptId:string;taskNumber:number;mode:Mode;stage:string;status:string;timing:{module:string;preparationSeconds:number;answerSeconds:number};content:{prompt:string;alternatives?:string[];image?:string}}
-export const speakingTasks = [1,2,3,4,6,7,8]
-export const speakingNames:Record<number,string> = {1:'Giving Advice',2:'Talking about a Personal Experience',3:'Describing a Scene',4:'Making Predictions',8:'Describing an Unusual Situation',6:'Dealing with a Difficult Situation',7:'Expressing Opinions'}
+export type SpeakingOption={id:string;title:string;image:string;details:string[]}
+export type SpeakingSession = {sessionId:string;attemptId:string;taskNumber:number;mode:Mode;stage:string;status:string;selectionMs?:number;automaticChoice?:boolean;choice?:string;timing:{module:string;selectionSeconds:number;preparationSeconds:number;answerSeconds:number};content:{prompt:string;alternatives?:string[];image?:string;persuasionPrompt?:string;options?:SpeakingOption[]}}
+export const speakingTasks = [1,2,3,4,5,6,7,8]
+export const speakingNames:Record<number,string> = {1:'Giving Advice',2:'Talking about a Personal Experience',5:'Comparing and Persuading',3:'Describing a Scene',4:'Making Predictions',8:'Describing an Unusual Situation',6:'Dealing with a Difficult Situation',7:'Expressing Opinions'}
 export class Microphone {
   stream:MediaStream
   recorder:MediaRecorder

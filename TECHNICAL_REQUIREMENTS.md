@@ -208,7 +208,7 @@ Initial status: repository created/opened by learner; code, runtime, browser rec
 |---|---|---|
 | 0. Project initialization (Task 01) | COMPLETE | Both builds, backend context test, frontend typecheck/lint, HTTP readiness and two consecutive restarts passed; unfamiliar listener refused |
 | 1. Backend | COMPLETE | Task 03 backend acceptance passed: 166 tests, packaged build, scoped media/export APIs and local script checks. Browser capture/countdowns/playback remain Phase 3 integration checks |
-| 2. Frontend | IN PROGRESS | Tasks 04–05 COMPLETE and approved. Task 06 Writing COMPLETE and visually approved. Task 07 Reading and import/evaluation refinements COMPLETE and approved. Task 08A Speaking 1/2/6/7 implemented; Task 2 Exam user-tested. M4A refinement implemented; user verification pending. Task 08B Speaking 3/4 pair and 8 implemented; user verification pending. Speaking 5 and history remain pending |
+| 2. Frontend | IN PROGRESS | Tasks 04–05 COMPLETE and approved. Task 06 Writing COMPLETE and visually approved. Task 07 Reading and import/evaluation refinements COMPLETE and approved. Task 08A Speaking 1/2/6/7 implemented; Task 2 Exam user-tested. M4A refinement implemented; user verification pending. Task 08B approved. Task 08C Speaking 5 implemented; user verification pending. History remains pending |
 | 3. Integration/test | NOT STARTED | Await frontend implementation |
 | 4. Polish/launch | NOT STARTED | Await integration gate |
 
@@ -655,3 +655,20 @@ Copy everything for ChatGPT refinement: one native pasteboard write contains com
 Copy wording follow-up: removed all path-copy UI controls again at user request. Copy metadata is now Copy details; the files/TXT fallback is Copy files + details. Successful copy notifications use “Copied! Ready to paste.” Backend path capability is retained for compatibility only, with no visible button.
 
 Task 08B and subsequent Speaking refinements approved after user testing before Task 08C. Confirmed user checks remain the explicitly reported ZIP/mapping/spoiler controls, linked 3/4 scene/transitions and both M4A ChatGPT uploads; no assertion that Task 8, native mixed clipboard destinations or all failure paths were independently verified.
+
+
+### Task 08C — Comparing and Persuading (approved)
+
+Task 08B and refinements committed as `ed8f351f555791e3e58e1dfb6ce1d6c0c82546ca`, pushed and remote-verified before implementation. Existing explicitly reported user checks remain recorded; untested failure scenarios are not claimed passed.
+
+Task 5 now enables Start using the existing A/B/C v1 schema. App starts its SELECTION session without microphone access; only the selection prompt and A/B reach the frontend. Both scoped images decode before mounting the selection clock. Equal-width, keyboard-accessible selectable cards preserve titles/details and uncropped images; enlargement does not pause timing. No default choice. Practice selection is unlimited; Timed/Exam use backend-configured 60 seconds. Confirm locks a deliberate choice; timeout locks the selected choice or backend fallback A if none. Actual selection milliseconds and manual/automatic fallback remain backend-persisted. Requests freeze their original choice/time and reconcile uncertain transition responses through GET session, without creating another attempt or exposing C before lock.
+
+After lock, TaskFive requests microphone permission, and SpeakingFlow decodes the chosen image and C before mounting the existing SpeakingExam. Preparation and recording use backend 60/60 seconds; Practice retains unlimited prep/manual recording. Both original instructions remain available for evaluation, while the active UI uses persuasionPrompt with Your choice left/Their choice right. Rejected option is removed and cannot be selected. The same original WebM capture, AAC conversion, failure retries, active-stage timer/meter, exit controls and accessible copy acknowledgements are reused. One attempt/recording is created. The previously user-requested temporary early-finish testing controls remain enabled; disable `celpip.speaking.testing-early-finish` for strict preparation/recording enforcement.
+
+Task 5 imports already required three distinct references; the importer now also rejects identical image bytes under different filenames for this task. Automatic filename mapping is reused; manual selectors appear only for missing/ambiguous matches, with no previews. Existing imports/data are not rewritten.
+
+Task 5 results show selected option, selection method and all durations. Copy details/evaluation includes both original instructions, complete chosen/C titles and details, mode, manual/automatic selection and selection/preparation/speaking durations. Rejected initial option and its image are excluded. Copy everything uses the existing native mixed clipboard plus TXT fallback and includes one M4A and exactly the two visible images. Per-image copy/Finder uses an optional managed asset ID, validated against that completed attempt; no arbitrary paths or asset escape. Individual audio/details controls remain. No schema changes, external APIs, dependencies, AI evaluation or Practice History added.
+
+Verification: frontend typecheck, lint and production build pass; backend compiles/packages with tests skipped. No browser automation/manual tests or test suite executed. Selection timeout/fallback, stage/content hiding, image decode/layout, microphone activation, recording/upload/conversion/retry and clipboard behavior await user verification. Both local servers restarted. Task 08C remains uncommitted pending approval. PRACTICE_GENERATION_INSTRUCTIONS.md remains unavailable; the user-authorized fallback schema in this document and backend/API.md were used.
+
+Task 08C approved after user testing of Speaking Task 5. No claim that every failure/permission/clipboard scenario was tested. Authorized for commit before Task 09.

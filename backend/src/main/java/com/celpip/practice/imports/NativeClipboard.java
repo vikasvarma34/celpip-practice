@@ -10,12 +10,15 @@ public class NativeClipboard {
  final EvaluationService evaluation;final PracticeMedia media;final AudioConversion conversion;
  NativeClipboard(EvaluationService evaluation,PracticeMedia media,AudioConversion conversion){this.evaluation=evaluation;this.media=media;this.conversion=conversion;}
  public JsonNode copy(JsonNode r)throws Exception{
-  fields(r,"request","attemptId","kind","paired","path");String id=text(r.get("attemptId"),"attemptId"),kind=text(r.get("kind"),"kind");
+  if(r.has("assetId"))fields(r,"request","attemptId","kind","paired","path","assetId");else fields(r,"request","attemptId","kind","paired","path");String id=text(r.get("attemptId"),"attemptId"),kind=text(r.get("kind"),"kind");
   ImportProblem.require(r.get("paired").isBoolean()&&r.get("path").isBoolean(),"request","Expected boolean flags.");
   ImportProblem.require(Set.of("AUDIO","IMAGE","ALL","ALL_FILES").contains(kind),"kind","Choose AUDIO, IMAGE, ALL or ALL_FILES.");
   Set<Path> files=new LinkedHashSet<>();for(var attempt:evaluation.included(id,r.get("paired").booleanValue())){
    if(!kind.equals("IMAGE"))files.add(conversion.m4a(attempt.id));
-   if(!kind.equals("AUDIO"))for(String relative:media.imagePaths(attempt).values())files.add(media.safe(relative,true));
+   if(r.has("assetId")){
+    ImportProblem.require(kind.equals("IMAGE")&&!r.get("paired").booleanValue(),"assetId","Asset selection requires individual image copying.");
+    String asset=text(r.get("assetId"),"assetId");ImportProblem.require(media.imagePaths(attempt).containsKey(asset),"assetId","Image is not part of this completed attempt.");files.add(media.image(asset,null,attempt.id));
+   }else if(!kind.equals("AUDIO"))for(String relative:media.imagePaths(attempt).values())files.add(media.safe(relative,true));
   }
   String metadata=null;
   if((kind.equals("ALL")||kind.equals("ALL_FILES"))&&!r.get("path").booleanValue()){

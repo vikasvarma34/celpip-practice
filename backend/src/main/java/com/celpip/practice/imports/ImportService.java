@@ -66,6 +66,7 @@ public class ImportService {
             var unit = validator.validate(Files.readAllBytes(upload.json()));
             if (expectedModule != null) ImportProblem.require(expectedModule.equals(unit.module()), "expectedModule", "Package module does not match the selected module.");
             Map<String, String> hashes = uploads.verifyImages(unit, upload);
+            if(unit.module().equals("SPEAKING")&&unit.exercises().getFirst().get("taskNumber").intValue()==5)ImportProblem.require(new HashSet<>(hashes.values()).size()==3,"options.image","Task 5 requires three distinct image files, with different image bytes.");
             List<String> full = unit.exercises().stream().map(e -> Fingerprints.exercise(unit.module(), e, hashes, false)).toList();
             List<String> prompts = unit.exercises().stream().map(e -> Fingerprints.exercise(unit.module(), e, hashes, true)).toList();
             String fingerprint = Fingerprints.unit(full), promptFingerprint = Fingerprints.unit(prompts);

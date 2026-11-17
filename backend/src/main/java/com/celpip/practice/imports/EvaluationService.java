@@ -61,6 +61,17 @@ public class EvaluationService {
                     if(!s.mode.equals("PRACTICE")&&(a.preparationMs<practice.timing(a).preparationSeconds()*1000L||a.durationMs<practice.timing(a).answerSeconds()*1000L))text.append("Testing: ended early; shortened examination conditions.\n");
                     if(content.has("alternatives"))for(JsonNode alternative:content.get("alternatives"))text.append(alternative.stringValue()).append('\n');
                     if(content.has("image")&&!pair)text.append("Attach this task's original image and M4A recording for evaluation.\n");
+                }else if(a.taskNumber==5){
+                    text.append("Speaking task 5 — Comparing and Persuading\nPractice mode: ").append(s.mode)
+                        .append("\nSelection: ").append(elapsed(a.selectionMs)).append("\nPreparation: ").append(elapsed(a.preparationMs)).append("\nSpeaking: ").append(elapsed(a.durationMs))
+                        .append("\nSelected option: ").append(a.choice).append("\nSelection method: ").append(a.automaticChoice?"Automatic fallback (A)":"Manual selection").append("\n\nSelection instructions:\n").append(content.get("prompt").stringValue())
+                        .append("\n\nPersuasion instructions:\n").append(content.get("persuasionPrompt").stringValue()).append('\n');
+                    for(JsonNode option:content.get("options")){
+                        text.append("\n").append(option.get("id").stringValue().equals("C")?"Their choice — C: ":"Your choice — "+a.choice+": ").append(option.get("title").stringValue()).append('\n');
+                        for(JsonNode detail:option.get("details"))text.append("• ").append(detail.stringValue()).append('\n');
+                    }
+                    text.append("\nAttach the chosen option image, option C image and speaking recording.\n");
+                    if(!s.mode.equals("PRACTICE")&&(a.preparationMs<practice.timing(a).preparationSeconds()*1000L||a.durationMs<practice.timing(a).answerSeconds()*1000L))text.append("Testing: ended early; shortened examination conditions.\n");
                 }else{
                     text.append(module).append(" task ").append(a.taskNumber).append("\nMode: ").append(s.mode).append("; attempt: ").append(a.sequenceNumber).append("\nSelection/preparation/response (ms): ").append(a.selectionMs).append(" / ").append(a.preparationMs).append(" / ").append(a.durationMs).append("\n");
                     render(content,text);if(a.responseJson!=null){text.append("Original response:\n");render(parse(a.responseJson),text);}if(a.resultJson!=null)render(parse(a.resultJson),text);
