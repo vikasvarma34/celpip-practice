@@ -1,3 +1,7 @@
+import ReadingExam from './ReadingExam';
+import ReadingRecovery from './ReadingRecovery';
+import { readReadingRecovery } from './reading';
+import type { ReadingSession } from './reading';
 import WritingExam from "./WritingExam";
 import WritingRecovery from "./WritingRecovery";
 import { api, readRecovery } from "./practice";
@@ -100,7 +104,8 @@ const pages: Record<string, string> = {
 const currentPage = () => window.location.hash.replace(/^#\/?/, "");
 
 export default function App() {
-  const [session, setSession] = useState<Session>();
+  const [session, setSession] = useState<Session | ReadingSession>();
+  const [readingRecovery, setReadingRecovery] = useState(readReadingRecovery);
   const [recovery, setRecovery] = useState(readRecovery);
   const [page, setPage] = useState(currentPage);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -116,13 +121,14 @@ export default function App() {
     else heading.current?.focus();
   }, [page]);
 
-  function home() { setSession(undefined); setRecovery(undefined); window.location.hash = '/'; setPage(''); }
+  function home() { setSession(undefined); setRecovery(undefined); setReadingRecovery(undefined); window.location.hash = '/'; setPage(''); }
   async function start(packageId: string, mode: Mode) {
-    const started = await api<Session>('/sessions', 'POST', { packageId, mode });
-    try { sessionStorage.setItem('celpip-writing-recovery', JSON.stringify({ sessionId: started.sessionId, attemptId: started.attemptId, response: started.taskNumber === 2 ? { text: '', choice: null } : { text: '' } })); } catch { /* Server drafts still persist. */ }
+    const started = await api<Session & {timing: {module:string;answerSeconds:number}}>('/sessions', 'POST', { packageId, mode });
+    try { sessionStorage.setItem(started.timing.module === 'READING' ? 'celpip-reading-recovery' : 'celpip-writing-recovery', JSON.stringify({ sessionId: started.sessionId, attemptId: started.attemptId, response: started.timing.module === 'READING' ? {answers:{}} : started.taskNumber === 2 ? { text: '', choice: null } : { text: '' } })); } catch { /* Server drafts still persist. */ }
     setSession(started);
   }
-  if (session) return <WritingExam session={session} onHome={home} />;
+  if (session) return 'passage' in session.content ? <ReadingExam session={session as ReadingSession} onHome={home} /> : <WritingExam session={session as Session} onHome={home} />;
+  if (readingRecovery) return <ReadingRecovery recovery={readingRecovery} onHome={home} />;
   if (recovery) return <WritingRecovery recovery={recovery} onHome={home} />;
   return (
     <>

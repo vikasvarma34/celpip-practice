@@ -6,7 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { readFile } from 'node:fs/promises'
 
 test('both Writing tasks render complete canonical content and accessible editor in every mode', async () => {
-  const vite = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+  const vite = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
   try {
     const { default: WritingExam } = await vite.ssrLoadModule('/src/WritingExam.tsx')
     for (const task of [1,2]) for (const mode of ['PRACTICE','TIMED','EXAM']) {
@@ -23,7 +23,7 @@ test('both Writing tasks render complete canonical content and accessible editor
   } finally { await vite.close() }
 })
 test('initial module import pages fetch no session or question and reveal no exercise content', async () => {
-  const vite = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+  const vite = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
   try {
     const { default: ImportScreen } = await vite.ssrLoadModule('/src/ImportScreen.tsx')
     for(const module of ['READING','WRITING','SPEAKING']) {

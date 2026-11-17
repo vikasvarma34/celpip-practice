@@ -15,28 +15,28 @@ export async function api<T>(path: string, method = 'GET', body?: unknown): Prom
   return data as T
 }
 /** One ordered draft queue; submission freezes one payload and drains writes before finalizing. */
-export class ResponseWriter {
+export class ResponseWriter<R = WritingResponse, V = Review> {
   private queue: Promise<void> = Promise.resolve()
-  private frozen?: { response: WritingResponse; durationMs: number }
-  private pending?: Promise<Review>
-  private saved?: Review
+  private frozen?: { response: R; durationMs: number }
+  private pending?: Promise<V>
+  private saved?: V
   closed = false
   private send: (method: string, action: string, body: unknown) => Promise<unknown>
   constructor(send: (method: string, action: string, body: unknown) => Promise<unknown>) { this.send = send }
-  draft(response: WritingResponse): Promise<void> {
+  draft(response: R): Promise<void> {
     if (this.closed || this.frozen) return Promise.resolve()
-    const snapshot = { ...response }
+    const snapshot = structuredClone(response)
     const task = this.queue.then(async () => { if (!this.closed) await this.send('PATCH', 'draft', snapshot) })
     this.queue = task.catch(() => {})
     return task
   }
-  submit(response: WritingResponse, durationMs: number): Promise<Review> {
+  submit(response: R, durationMs: number): Promise<V> {
     if (this.saved) return Promise.resolve(this.saved)
     if (this.pending) return this.pending
     if (this.closed) return Promise.reject(new Error('This attempt was interrupted.'))
-    this.frozen ??= { response: { ...response }, durationMs }
+    this.frozen ??= { response: structuredClone(response), durationMs }
     this.pending = this.queue.then(async () => {
-      const result = await this.send('POST', 'submit', this.frozen) as Review
+      const result = await this.send('POST', 'submit', this.frozen) as V
       this.saved = result; this.closed = true; return result
     }).finally(() => { this.pending = undefined })
     return this.pending

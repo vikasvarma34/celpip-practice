@@ -163,3 +163,26 @@ textarea { display: block; resize: vertical; width: 100%; padding: 16px; border:
 .ready-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 24px; }
 .ready-actions .navy-button { margin-top: 0; }
 .ready-actions > p { flex-basis: 100%; margin: 0; }
+
+/* Reading keeps evidence and questions independently scrollable. */
+.reading-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; padding: 24px 32px; width: 100%; max-width: 1800px; margin: 0 auto; flex: 1; min-height: 0; }
+.reading-columns .question-panel { max-height: calc(100dvh - 224px); }
+.passage-block p, .inline-questions { white-space: pre-wrap; }
+.passage-block img { max-width: 100%; height: auto; display: block; }
+.passage-block + .passage-block, .question-group + .question-group { margin-top: 24px; }
+.reading-table { overflow-x: auto; }
+.reading-table table { width: 100%; border-collapse: collapse; }
+.reading-table th, .reading-table td { border: 1px solid var(--border); padding: 16px; text-align: left; white-space: pre-wrap; }
+.reading-table th { background: var(--soft-accent); }
+.reading-question { margin-bottom: 24px; }
+.reading-question label { display: block; margin-bottom: 8px; }
+.reading-columns select { font: inherit; max-width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--primary); }
+select:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+.inline-questions select { display: inline-block; margin: 4px; }
+.reading-results { padding: 32px; }
+.reading-results .reading-columns { padding: 0; max-width: none; }
+.answer-review { padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); border-left: 4px solid var(--secondary); border-radius: 8px; }
+.answer-review.correct { border-left-color: #15803D; }
+.answer-review.incorrect { border-left-color: #B91C1C; }
+.answer-review.unanswered { border-left-color: #B45309; }
+@media (max-width:760px) { .reading-columns {grid-template-columns:1fr;padding:16px;gap:16px} .reading-columns .question-panel {max-height:55dvh} .reading-results {padding:16px} .reading-exam .exam-actions {flex-wrap:wrap} }

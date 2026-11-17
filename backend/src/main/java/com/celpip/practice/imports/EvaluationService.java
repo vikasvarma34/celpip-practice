@@ -25,15 +25,38 @@ public class EvaluationService {
     public Context context(String id,boolean pair){
         synchronized(practice){StringBuilder text=new StringBuilder();Map<String,Asset> assets=new LinkedHashMap<>();
             for(var a:included(id,pair)){
-                var s=practice.session(a.sessionId);text.append(practice.module(a)).append(" task ").append(a.taskNumber).append("\nMode: ").append(s.mode).append("; attempt: ").append(a.sequenceNumber).append("\nSelection/preparation/response (ms): ").append(a.selectionMs).append(" / ").append(a.preparationMs).append(" / ").append(a.durationMs).append("\n");
-                JsonNode content=practice.visible(a);
-                if(practice.module(a).equals("READING")){
-                    render(content.get("passage"),text);JsonNode result=parse(a.resultJson);text.append("Raw score: ").append(result.get("correct")).append('/').append(result.get("total")).append('\n');
-                    for(JsonNode item:result.get("questions"))if(!item.get("correct").booleanValue()){
-                        String qid=item.get("questionId").stringValue();for(JsonNode group:content.get("questionGroups"))for(JsonNode q:group.get("questions"))if(q.get("id").stringValue().equals(qid)){if(group.has("text"))render(group.get("text"),text);render(q,text);}render(item,text);
+                var s=practice.session(a.sessionId);String module=practice.module(a);JsonNode content=practice.visible(a);
+                if(module.equals("READING")||module.equals("WRITING")){
+                    text.append(module.equals("READING")?"Reading part ":"Writing task ").append(a.taskNumber).append("\nPractice mode: ").append(s.mode).append("\nTime taken: ").append(a.durationMs/60000).append(" minutes ").append((a.durationMs/1000)%60).append(" seconds\n\n");
+                    if(module.equals("READING")){
+                        JsonNode result=parse(a.resultJson);text.append("Raw score: ").append(result.get("correct")).append('/').append(result.get("total")).append("\n\nPassage:\n");
+                        for(JsonNode block:content.get("passage")){
+                            String type=block.get("type").stringValue();
+                            if(type.equals("IMAGE"))text.append("Attach the passage diagram image accompanying this evaluation.\n");
+                            else if(type.equals("TABLE")){for(JsonNode row:block.get("headers"))text.append(row.stringValue()).append(" | ");text.append('\n');for(JsonNode row:block.get("rows")){for(JsonNode cell:row)text.append(cell.stringValue()).append(" | ");text.append('\n');}}
+                            else{if(block.has("label"))text.append("Paragraph ").append(block.get("label").stringValue()).append(":\n");text.append(block.get("text").stringValue()).append("\n\n");}
+                        }
+                        for(JsonNode group:content.get("questionGroups")){
+                            boolean shown=false;
+                            for(JsonNode q:group.get("questions"))for(JsonNode item:result.get("questions"))if(q.get("id").stringValue().equals(item.get("questionId").stringValue())&&!item.get("correct").booleanValue()){
+                                if(group.has("text")&&!shown){text.append("\nQuestion context:\n").append(group.get("text").stringValue().replaceAll("\\{\\{Q0?([0-9]+)\\}\\}", "[Blank $1]")).append('\n');shown=true;}
+                                text.append("\nQuestion ").append(Integer.parseInt(q.get("id").stringValue().substring(1))).append(": ").append(q.has("prompt")?q.get("prompt").stringValue():"Choose the word or phrase for this blank.").append('\n');
+                                for(JsonNode option:q.get("options"))text.append("• ").append(option.stringValue()).append('\n');
+                                JsonNode selected=item.get("selectedOption");text.append("My selected answer: ").append(selected==null||selected.isNull()?"Unanswered":q.get("options").get(selected.intValue()).stringValue()).append("\nCorrect answer: ").append(q.get("options").get(item.get("correctOption").intValue()).stringValue()).append("\nExplanation: ").append(item.get("explanation").stringValue()).append('\n');
+                            }
+                        }
+                    }else{
+                        for(String field:List.of("title","scenario","instructions"))if(content.has(field))text.append(content.get(field).stringValue()).append("\n\n");
+                        if(content.has("requirements"))for(JsonNode requirement:content.get("requirements"))text.append("• ").append(requirement.stringValue()).append('\n');
+                        JsonNode response=parse(a.responseJson);
+                        if(content.has("options")){for(JsonNode option:content.get("options"))text.append("Option ").append(option.get("id").stringValue()).append(": ").append(option.get("text").stringValue()).append('\n');text.append("Selected survey option: ");JsonNode choice=response.get("choice");boolean found=false;for(JsonNode option:content.get("options"))if(choice!=null&&!choice.isNull()&&choice.stringValue().equals(option.get("id").stringValue())){text.append(option.get("text").stringValue());found=true;}if(!found)text.append("Not selected");text.append('\n');}
+                        text.append("Word count: ").append(parse(a.resultJson).get("wordCount")).append("\n\nMy exact written response:\n").append(response.get("text").stringValue());
                     }
-                }else{render(content,text);if(a.responseJson!=null){text.append("Original response:\n");render(parse(a.responseJson),text);}if(a.resultJson!=null)render(parse(a.resultJson),text);}
-                if(a.choice!=null)text.append("Chosen option: ").append(a.choice).append("; automatic fallback: ").append(a.automaticChoice).append('\n');
+                }else{
+                    text.append(module).append(" task ").append(a.taskNumber).append("\nMode: ").append(s.mode).append("; attempt: ").append(a.sequenceNumber).append("\nSelection/preparation/response (ms): ").append(a.selectionMs).append(" / ").append(a.preparationMs).append(" / ").append(a.durationMs).append("\n");
+                    render(content,text);if(a.responseJson!=null){text.append("Original response:\n");render(parse(a.responseJson),text);}if(a.resultJson!=null)render(parse(a.resultJson),text);
+                    if(a.choice!=null)text.append("Chosen option: ").append(a.choice).append("; automatic fallback: ").append(a.automaticChoice).append('\n');
+                }
                 for(String asset:media.imagePaths(a).keySet())assets.putIfAbsent(asset,new Asset(asset,"/api/assets/"+asset+"?attemptId="+a.id,"IMAGE"));
                 if(a.audioPath!=null)assets.put(a.id,new Asset(a.id,"/api/attempts/"+a.id+"/audio","AUDIO"));text.append('\n');
             }return new Context(text.toString(),List.copyOf(assets.values()));
