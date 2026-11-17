@@ -8,5 +8,7 @@ public interface AttemptRepository extends JpaRepository<PracticeAttempt,String>
     @org.springframework.data.jpa.repository.Query(HISTORY_SELECT+"where s.id=:sessionId order by a.createdAt asc")
     List<HistoryRow> historySession(@org.springframework.data.repository.query.Param("sessionId") String sessionId);
     List<PracticeAttempt> findBySessionIdOrderByCreatedAt(String id);
+    @org.springframework.data.jpa.repository.Query("select coalesce(max(a.sequenceNumber),0) from PracticeAttempt a where a.exerciseId=:exerciseId")
+    long highestAttemptNumber(@org.springframework.data.repository.query.Param("exerciseId") String exerciseId);
     long countByExerciseId(String id);
 }

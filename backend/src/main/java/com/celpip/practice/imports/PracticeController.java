@@ -11,10 +11,10 @@ import static com.celpip.practice.imports.PracticeService.parse;
 @RestController
 @RequestMapping("/api")
 public class PracticeController {
-    final PracticeService practice;final PracticeMedia media;final EvaluationService evaluation;final AudioConversion conversion;final NativeClipboard clipboard;
-    PracticeController(PracticeService practice,PracticeMedia media,EvaluationService evaluation,AudioConversion conversion,NativeClipboard clipboard){this.practice=practice;this.media=media;this.evaluation=evaluation;this.conversion=conversion;this.clipboard=clipboard;}
-    @GetMapping("/speaking-testing") public java.util.Map<String,Boolean> speakingTesting(){return java.util.Map.of("earlyFinish",practice.testingEarlyFinish);}
+    final PracticeService practice;final PracticeMedia media;final EvaluationService evaluation;final AudioConversion conversion;final NativeClipboard clipboard;final HistoryDeletion deletion;
+    PracticeController(PracticeService practice,PracticeMedia media,EvaluationService evaluation,AudioConversion conversion,NativeClipboard clipboard,HistoryDeletion deletion){this.practice=practice;this.media=media;this.evaluation=evaluation;this.conversion=conversion;this.clipboard=clipboard;this.deletion=deletion;}
     @PostMapping("/sessions") public JsonNode start(@RequestBody String body){return practice.start(parse(body));}
+    @DeleteMapping("/sessions/{id}") public JsonNode deleteSession(@PathVariable String id)throws Exception{return deletion.delete(id);}
     @GetMapping("/sessions/{id}") public JsonNode session(@PathVariable String id){return practice.view(id);}
     @PostMapping("/sessions/{id}/advance") public JsonNode advance(@PathVariable String id,@RequestBody String body){return practice.advance(id,parse(body));}
     @PostMapping("/sessions/{id}/interrupt") public JsonNode interrupt(@PathVariable String id,@RequestBody String body){return practice.interrupt(id,parse(body));}

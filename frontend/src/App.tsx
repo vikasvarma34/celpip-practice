@@ -18,7 +18,6 @@ type IconName =
   | "book"
   | "pen"
   | "mic"
-  | "upload"
   | "history"
   | "arrow"
   | "chevron"
@@ -45,11 +44,6 @@ function Icon({
       <>
         <rect x="9" y="2" width="6" height="13" rx="3" />
         <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8" />
-      </>
-    ),
-    upload: (
-      <>
-        <path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5" />
       </>
     ),
     history: (

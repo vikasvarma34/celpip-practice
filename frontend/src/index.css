@@ -196,7 +196,6 @@ select:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
 .speaking-timer strong { display: block; font-size: 36px; font-variant-numeric: tabular-nums; }
 .speaking-timer span { display: block; margin-top: 8px; }
 .speaking-timer.active { border-color: var(--primary); background: var(--soft-accent); box-shadow: inset 0 0 0 1px var(--primary); }
-.microphone-status meter { width: 100%; max-width: 320px; height: 24px; }
 .recording-status { color: #B91C1C; font-weight: 700; }
 .writing-result audio { width: 100%; margin: 16px 0; }
 @media(max-width:600px) { .speaking-main {width:calc(100% - 32px);margin:16px auto} .speaking-timers {gap:16px} .speaking-timer,.speaking-question,.microphone-status {padding:16px} }
@@ -217,7 +216,6 @@ select:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
 .speaking-result-card {border:1px solid var(--border);border-radius:16px;padding:24px;margin:24px 0;background:var(--surface)}
 .speaking-result-card h2 {background:var(--soft-accent);padding:16px;border-radius:8px;margin:0 0 16px}
 .attachment-controls {display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin:16px 0}
-.secondary-path {font-size:14px}
 
 .writing-result.speaking-result-card {margin:40px auto}
 
@@ -278,3 +276,6 @@ select:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
 .history-dates input {border:1px solid var(--border);border-radius:8px;padding:12px;background:var(--surface);color:var(--primary)}
 .history-timezone {font-size:14px;color:var(--secondary);margin-bottom:24px}
 
+
+.delete-button {color:#B91C1C;border-color:#B91C1C}
+.delete-button:hover:not(:disabled) {background:#FEF2F2}

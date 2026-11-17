@@ -12,8 +12,6 @@ import type { Microphone, SpeakingSession } from './speaking'
 type Phase='PREPARATION'|'STARTING'|'RECORDING'|'STOPPING'|'UPLOADING'|'RETRY'|'COMPLETED'|'INTERRUPTED'
 export type Saved={preparationMs:number;durationMs:number;audioUrl:string}
 export default function SpeakingExam({session,mic,onHome,imageUrl,optionsImages,onComplete}:{session:SpeakingSession;mic:Microphone;onHome:()=>void;imageUrl?:string;optionsImages?:Record<string,string>;onComplete?:(saved:Saved,next:SpeakingSession)=>void}) {
-  const [earlyFinish,setEarlyFinish]=useState(false)
-  useEffect(()=>{void api<{earlyFinish:boolean}>('/speaking-testing').then(value=>setEarlyFinish(value.earlyFinish)).catch(()=>{})},[])
   const [phase,setPhase]=useState<Phase>('PREPARATION')
   const current=useRef<Phase>('PREPARATION')
   const [prepStart]=useState(()=>performance.now())
@@ -138,5 +136,5 @@ export default function SpeakingExam({session,mic,onHome,imageUrl,optionsImages,
     </div>
     <p className="voice-meter-label">Speak naturally into your microphone</p>
     {notice&&<p role="status">{notice}</p>}
-  </section>}</aside>{error&&<p role="alert" className="exam-error">{error}</p>}</main><footer className="exam-actions"><button disabled={pending} onClick={()=>setExitConfirm(true)}>Exit practice</button>{(practice||earlyFinish)&&phase==='PREPARATION'&&<button className="navy-button" onClick={()=>void startRecording()}>{practice?'Start recording':'End preparation early (test)'}</button>}{(practice||earlyFinish)&&phase==='RECORDING'&&<button className="navy-button" onClick={stopRecording}>{practice?'Stop recording and save':'End speaking early (test)'}</button>}{phase==='RETRY'&&<button className="navy-button" onClick={()=>void upload()}>Retry saving recording</button>}</footer><AttemptDialog speaking canSave={phase==='RETRY'} confirm={exitConfirm?'exit':null} sending={pending} setConfirm={()=>setExitConfirm(false)} exit={exit} submit={upload}/></div>
+  </section>}</aside>{error&&<p role="alert" className="exam-error">{error}</p>}</main><footer className="exam-actions"><button disabled={pending} onClick={()=>setExitConfirm(true)}>Exit practice</button>{practice&&phase==='PREPARATION'&&<button className="navy-button" onClick={()=>void startRecording()}>Start recording</button>}{practice&&phase==='RECORDING'&&<button className="navy-button" onClick={stopRecording}>Stop recording and save</button>}{phase==='RETRY'&&<button className="navy-button" onClick={()=>void upload()}>Retry saving recording</button>}</footer><AttemptDialog speaking canSave={phase==='RETRY'} confirm={exitConfirm?'exit':null} sending={pending} setConfirm={()=>setExitConfirm(false)} exit={exit} submit={upload}/></div>
 }

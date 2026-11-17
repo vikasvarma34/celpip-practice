@@ -13,7 +13,6 @@ import static com.celpip.practice.imports.ContractValidator.*;
 
 @Service
 public class PracticeService {
-    @org.springframework.beans.factory.annotation.Value("${celpip.speaking.testing-early-finish:false}") boolean testingEarlyFinish;
     final SessionRepository sessions;
     final AttemptRepository attempts;
     final PackageRepository packages;
@@ -54,7 +53,7 @@ public class PracticeService {
     }
     void newAttempt(PracticeSession s,JsonNode e) {
         var a=new PracticeAttempt();a.id=UUID.randomUUID().toString();a.sessionId=s.id;a.exerciseId=e.get("exerciseId").stringValue();a.taskNumber=e.get("taskNumber").intValue();
-        a.sequenceNumber=Math.toIntExact(attempts.countByExerciseId(a.exerciseId)+1);a.createdAt=Instant.now();a.status="IN_PROGRESS";
+        a.sequenceNumber=Math.toIntExact(attempts.highestAttemptNumber(a.exerciseId)+1);a.createdAt=Instant.now();a.status="IN_PROGRESS";
         a.stage=pack(s).module.equals("SPEAKING")?(a.taskNumber==5?"SELECTION":"PREPARATION"):"RESPONSE";
         attempts.saveAndFlush(a);s.currentAttemptId=a.id;
     }
@@ -95,7 +94,7 @@ public class PracticeService {
             a.automaticChoice=choice==null;a.choice=choice==null?"A":choice;a.selectionMs=elapsed;a.stage="PREPARATION";
         } else {
             state(action.equals("START_RECORDING")&&a.stage.equals("PREPARATION"));state(r.get("choice").isNull()&&!r.get("timeout").booleanValue());
-            if(!s.mode.equals("PRACTICE")&&!testingEarlyFinish)state(elapsed>=timing(a).preparationSeconds()*1000L);
+            if(!s.mode.equals("PRACTICE"))state(elapsed>=timing(a).preparationSeconds()*1000L);
             a.preparationMs=elapsed;a.stage="RECORDING";
         }
         attempts.saveAndFlush(a);return view(id);
