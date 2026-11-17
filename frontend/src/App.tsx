@@ -1,3 +1,4 @@
+import History from './History';
 import TaskFive from './TaskFive';
 import SpeakingFlow from './SpeakingFlow';
 import { prepareMicrophone, speakingTasks } from './speaking';
@@ -214,16 +215,6 @@ export default function App() {
               </div>
             </section>
             <div className="secondary-grid">
-              <a className="secondary-card" href="#/import">
-                <span className="secondary-icon">
-                  <Icon name="upload" />
-                </span>
-                <span className="secondary-copy">
-                  <span className="secondary-title">Load exercise</span>
-                  <span className="secondary-subtitle">ZIP or JSON.</span>
-                </span>
-                <Icon name="chevron" className="secondary-chevron" />
-              </a>
               <a className="secondary-card" href="#/history">
                 <span className="secondary-icon">
                   <Icon name="history" />
@@ -236,7 +227,7 @@ export default function App() {
               </a>
             </div>
           </>
-        ) : ["reading", "writing", "speaking", "import"].includes(page) ? (
+        ) : page === 'history' ? <History onStart={start} onHome={home}/> : ["reading", "writing", "speaking", "import"].includes(page) ? (
           <ImportScreen onStart={start} key={page} module={page === "import" ? undefined : page.toUpperCase()} />
         ) : (
           <section className="placeholder">

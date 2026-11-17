@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { speakingTasks } from './speaking'
 import type { Mode } from './practice'
-type Receipt = { packageId: string; module: string; taskNumbers: number[]; exerciseCount: number; status: string }
-export default function ImportScreen({ module, onStart }: { module?: string; onStart: (packageId: string, mode: Mode, module: string, tasks: number[]) => Promise<void> }) {
+export type Receipt = { packageId: string; module: string; taskNumbers: number[]; exerciseCount: number; status: string }
+export default function ImportScreen({ module, onStart, initialReady }: { initialReady?: Receipt; module?: string; onStart: (packageId: string, mode: Mode, module: string, tasks: number[]) => Promise<void> }) {
   const [tab, setTab] = useState('upload')
   const [file, setFile] = useState<File>()
   const [json, setJson] = useState('')
@@ -33,7 +33,7 @@ export default function ImportScreen({ module, onStart }: { module?: string; onS
   const [confirmStart, setConfirmStart] = useState(false)
   const lock = useRef(false)
   const [error, setError] = useState('')
-  const [ready, setReady] = useState<Receipt>()
+  const [ready, setReady] = useState<Receipt|undefined>(initialReady)
   const [mode, setMode] = useState('Practice')
   const select = (value?: File) => { setError(''); if (value && !/\.(zip|json)$/i.test(value.name)) { setError('Choose a ZIP or JSON file.'); return } setParsed(false); setFile(value) }
   async function submit() {

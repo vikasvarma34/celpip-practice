@@ -208,7 +208,7 @@ Initial status: repository created/opened by learner; code, runtime, browser rec
 |---|---|---|
 | 0. Project initialization (Task 01) | COMPLETE | Both builds, backend context test, frontend typecheck/lint, HTTP readiness and two consecutive restarts passed; unfamiliar listener refused |
 | 1. Backend | COMPLETE | Task 03 backend acceptance passed: 166 tests, packaged build, scoped media/export APIs and local script checks. Browser capture/countdowns/playback remain Phase 3 integration checks |
-| 2. Frontend | IN PROGRESS | Tasks 04–05 COMPLETE and approved. Task 06 Writing COMPLETE and visually approved. Task 07 Reading and import/evaluation refinements COMPLETE and approved. Task 08A Speaking 1/2/6/7 implemented; Task 2 Exam user-tested. M4A refinement implemented; user verification pending. Task 08B approved. Task 08C Speaking 5 implemented; user verification pending. History remains pending |
+| 2. Frontend | IN PROGRESS | Tasks 04–05 COMPLETE and approved. Task 06 Writing COMPLETE and visually approved. Task 07 Reading and import/evaluation refinements COMPLETE and approved. Task 08A Speaking 1/2/6/7 implemented; Task 2 Exam user-tested. M4A refinement implemented; user verification pending. Task 08B approved. Task 08C approved. Task 09 history/review/retry implemented; user verification pending |
 | 3. Integration/test | NOT STARTED | Await frontend implementation |
 | 4. Polish/launch | NOT STARTED | Await integration gate |
 
@@ -672,3 +672,31 @@ Task 5 results show selected option, selection method and all durations. Copy de
 Verification: frontend typecheck, lint and production build pass; backend compiles/packages with tests skipped. No browser automation/manual tests or test suite executed. Selection timeout/fallback, stage/content hiding, image decode/layout, microphone activation, recording/upload/conversion/retry and clipboard behavior await user verification. Both local servers restarted. Task 08C remains uncommitted pending approval. PRACTICE_GENERATION_INSTRUCTIONS.md remains unavailable; the user-authorized fallback schema in this document and backend/API.md were used.
 
 Task 08C approved after user testing of Speaking Task 5. No claim that every failure/permission/clipboard scenario was tested. Authorized for commit before Task 09.
+
+
+### Task 09 — Practice History (implemented; awaiting user verification)
+
+Task 08C user-tested and approved, committed as `2c4fd993234beea6d90458f179a9b1451b0b8aa2`, pushed and remote-verified before implementation. No unreported failure-path verification is claimed.
+
+Homepage Practice history now opens the existing GET /api/history session summaries with All/Reading/Writing/Speaking filters, reverse chronological order, local date/time, attempt numbers, mode, response/preparation durations, status and original completed Reading raw score. Linked Tasks 3/4 share one session entry. Backend history contains no unstarted imports or content previews; list does not request questions/assets/responses. Loading/error/empty states and retry controls are provided. In-progress attempts remain labelled and cannot be reviewed through the completed/interrupted review endpoint.
+
+View results fetches only the selected session's stored completed/interrupted attempt IDs, never the latest attempt of an exercise. Reading reuses ReadingResults, Passage and question controls for original evidence, saved choices, scores/explanations; interrupted Reading shows its draft without results. Writing shows the complete stored question/requirements/options and exact response or interrupted draft; completed word count and duration come from the backend. Speaking reuses audio conversion/playback, native attachment copying, scoped images/options and Finder. Linked results show both prompts/recordings and one shared scene; Task 5 keeps its locked choice/details and original stage timings. Review mounts no exam timer/MediaRecorder or microphone preflight and creates no attempt.
+
+Retry retrieves neutral package metadata using the historical packageId, then opens ImportScreen in its ready state with mode selection and existing Start confirmation. Content is not requested for retry until confirmed Start; no original ZIP is required. Every Start creates a new session/attempt, with paired retry starting Task 3 and Task 5 retry starting A/B selection. Previous work is preserved.
+
+Completed results support per-attempt evaluation-context copy and existing evaluation ZIP export. Both completed 3/4 records enable combined details, native attachment copy and paired ZIP; interrupted pairs retain earlier saved recordings but do not expose completed-only paired exports. Historical native copies use the selected attempt and existing visible asset scopes. Path-copy UI remains removed per the user's latest approved design; underlying guarded clipboard capability is unchanged. Temporary early-finish test controls remain enabled. No backend endpoint/schema/database changes, dependencies, analytics, deletion, cloud or AI scoring added.
+
+Verification: frontend typecheck, lint and production build pass; backend compiles/packages with tests skipped. No test suites, Chrome automation or manual browser tests run. History filters/review, actual audio/clipboard/ZIP behavior, interruption display and retry/new-attempt behavior await user verification. Both servers restarted on existing loopback ports. Task 09 remains uncommitted pending user approval.
+
+
+Task 09 date refinement: previous history loaded all sessions and full attempt entities, including mapped large fields, to construct summaries. The page now defaults to the browser's current local date, with date picker, previous/next day and Today, retaining module filters. Requests send an explicit YYYY-MM-DD and IANA timezone. Backend derives inclusive local-day start/exclusive next-day start as Instants (calendar boundaries, including DST), filtering practice_attempt.created_at in the repository query before hydration. Constructor projections omit draft/response text, media paths and exercise canonical JSON; completed Reading result JSON is selected only to derive the existing raw-score summary and never exposed in the list. No duplicate score/history storage was added.
+
+Flyway V3 adds indexes on practice_attempt(created_at) and practice_attempt(session_id,created_at). Existing rows are preserved. History groups matching day attempts by session, retaining linked 3/4 identity even across midnight. View results explicitly requests that session's summary group, then stored reviews, so both linked parts remain available even when they occurred on different dates. No unrelated historical attempts are loaded. Review/retry/export uses unchanged historical IDs.
+
+Frontend aborts obsolete date requests and keys results/errors by date/timezone/reload, so stale entries cannot appear under a newly selected date. Empty dates and loading/errors are explicit. No separate history table, dependencies, data deletion or migration of recordings. Typecheck/lint/build and backend compilation only; no browser tests or additional tests. Both servers restarted; refinement remains uncommitted awaiting approval.
+
+Homepage follow-up: general Load exercise card disabled/non-interactive at user request. Module-specific loading and historical Retry remain available.
+
+Homepage clarification: general Load exercise card deleted from homepage markup, superseding the disabled-card change. No hidden placeholder or disabled-card CSS remains.
+
+Task 09 date-based history approved before Task 10A. Database-level date bounds, projection/index migration and date navigation implemented; typecheck/lint/build/backend compilation and server startup verified. Browser date/DST/rapid-navigation edge cases remain unverified by the agent. Homepage Load exercise card removal included.

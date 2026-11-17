@@ -154,7 +154,19 @@ public class PracticeService {
     ObjectNode summary(PracticeAttempt a) {
         var s=session(a.sessionId);return JSON.createObjectNode().put("attemptId",a.id).put("sessionId",a.sessionId).put("exerciseId",a.exerciseId).put("module",module(a)).put("taskNumber",a.taskNumber).put("attemptNumber",a.sequenceNumber).put("mode",s.mode).put("status",a.status).put("stage",a.stage).put("createdAt",a.createdAt.toString()).put("durationMs",a.durationMs).put("preparationMs",a.preparationMs).put("selectionMs",a.selectionMs).put("choice",a.choice).put("automaticChoice",a.automaticChoice);
     }
-    public synchronized JsonNode history() {
-        ArrayNode rows=JSON.createArrayNode();for(var s:sessions.findAllByOrderByCreatedAtDesc()) {ObjectNode row=JSON.createObjectNode().put("sessionId",s.id).put("packageId",s.packageId).put("mode",s.mode).put("status",s.status).put("createdAt",s.createdAt.toString());ArrayNode list=JSON.createArrayNode();for(var a:attempts.findBySessionIdOrderByCreatedAt(s.id)){ObjectNode entry=summary(a);if(a.status.equals("COMPLETED")&&module(a).equals("READING")){JsonNode r=parse(a.resultJson);entry.set("correct",r.get("correct"));entry.set("total",r.get("total"));}list.add(entry);}row.set("attempts",list);rows.add(row);}return rows;
+    public synchronized JsonNode history() {var zone=java.time.ZoneId.systemDefault();return history(java.time.LocalDate.now(zone),zone);}
+    public synchronized JsonNode history(java.time.LocalDate day,java.time.ZoneId zone) {
+        return historyRows(attempts.historyDay(day.atStartOfDay(zone).toInstant(),day.plusDays(1).atStartOfDay(zone).toInstant()));
+    }
+    public synchronized JsonNode sessionHistory(String id){session(id);return historyRows(attempts.historySession(id));}
+    JsonNode historyRows(List<HistoryRow> rows){
+        Map<String,ObjectNode> grouped=new LinkedHashMap<>();
+        for(var a:rows){
+            ObjectNode group=grouped.computeIfAbsent(a.sessionId(),id->{ObjectNode row=JSON.createObjectNode().put("sessionId",id).put("packageId",a.packageId()).put("mode",a.mode()).put("status",a.sessionStatus()).put("createdAt",a.sessionCreatedAt().toString());row.set("attempts",JSON.createArrayNode());return row;});
+            ObjectNode item=JSON.createObjectNode().put("attemptId",a.attemptId()).put("sessionId",a.sessionId()).put("module",a.module()).put("taskNumber",a.taskNumber()).put("attemptNumber",a.attemptNumber()).put("mode",a.mode()).put("status",a.status()).put("stage",a.stage()).put("createdAt",a.createdAt().toString()).put("durationMs",a.durationMs()).put("preparationMs",a.preparationMs()).put("selectionMs",a.selectionMs()).put("choice",a.choice()).put("automaticChoice",a.automaticChoice());
+            if(a.readingResult()!=null){JsonNode result=parse(a.readingResult());item.set("correct",result.get("correct"));item.set("total",result.get("total"));}
+            ((ArrayNode)group.get("attempts")).add(item);
+        }
+        ArrayNode result=JSON.createArrayNode();grouped.values().forEach(result::add);return result;
     }
 }

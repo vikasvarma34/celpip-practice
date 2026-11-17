@@ -27,7 +27,11 @@ public class PracticeController {
         return result;
     }
     @GetMapping("/attempts/{id}/review") public JsonNode review(@PathVariable String id){return practice.review(id);}
-    @GetMapping("/history") public JsonNode history(){return practice.history();}
+    @GetMapping("/history") public JsonNode history(@RequestParam(required=false)String date,@RequestParam(required=false)String timezone){
+        try{var zone=timezone==null?java.time.ZoneId.systemDefault():java.time.ZoneId.of(timezone);var day=date==null?java.time.LocalDate.now(zone):java.time.LocalDate.parse(date);return practice.history(day,zone);}
+        catch(java.time.DateTimeException ex){throw new ImportProblem(400,"INVALID_DATE","date","Supply a valid calendar date and IANA timezone.");}
+    }
+    @GetMapping("/sessions/{id}/history") public JsonNode sessionHistory(@PathVariable String id){return practice.sessionHistory(id);}
     @GetMapping("/attempts/{id}/evaluation-context") public EvaluationService.Context context(@PathVariable String id,@RequestParam(defaultValue="false")boolean paired){return evaluation.context(id,paired);}
     @PostMapping("/exports") public JsonNode export(@RequestBody String body)throws Exception{return evaluation.export(parse(body));}
     @GetMapping("/exports/{id}") public ResponseEntity<Resource> download(@PathVariable String id)throws Exception{return resource(evaluation.exportPath(id),"application/zip");}
