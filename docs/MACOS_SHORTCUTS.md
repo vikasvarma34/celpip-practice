@@ -25,3 +25,5 @@ Import `docs/CELPIP-bookmarks.html` using Chrome's bookmark HTML import, or crea
 - `shortcuts://run-shortcut?name=CELPIP%20Practice%20Files`
 
 Shortcut execution permissions, Chrome external-protocol prompts and actual launches from Chrome await user verification. No browser automation was performed.
+
+Bookmark artwork: the import HTML embeds four transparent 32px navy icons (#243B60): play, stop, restart arrow and folder. Editable generation source and PNGs are in docs/bookmark-icons/. Chromium supports PNG data-URL ICON attributes in bookmark imports, but appearance for shortcuts:// URLs must be verified after import. Existing installed bookmarks are not modified by editing this file. Import the updated HTML into Chrome; it may create another CELPIP/imported folder rather than update existing entries. Keep the preferred set manually; nothing is automatically removed. No extension required.
