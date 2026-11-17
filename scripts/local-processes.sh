@@ -32,6 +32,7 @@ stop_owned() {
   fi
   rm -f "$RUNTIME/$service.pid" "$RUNTIME/$service.identity"
 }
+stop_all() {
 # Preflight both ports before stopping either service.
 check_port backend 47321
 check_port frontend 47322
@@ -41,3 +42,5 @@ for port in 47321 47322; do
   for ((i=0; i<10; i++)); do [[ -z $(listeners "$port") ]] && break; sleep 1; done
   [[ -z $(listeners "$port") ]] || fail "Port $port has not been released."
 done
+
+}

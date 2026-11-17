@@ -9,4 +9,5 @@ command -v lsof >/dev/null || fail 'Missing command: lsof'
 mkdir "$RUNTIME/restart.lock" 2>/dev/null || fail 'Another start/stop operation is running.'
 trap 'rmdir "$RUNTIME/restart.lock"' EXIT
 source "$REPO/scripts/local-processes.sh"
+stop_all
 echo 'CELPIP stopped. Both dedicated ports are free; data and logs are preserved.'

@@ -702,7 +702,7 @@ Homepage clarification: general Load exercise card deleted from homepage markup,
 Task 09 date-based history approved before Task 10A. Database-level date bounds, projection/index migration and date navigation implemented; typecheck/lint/build/backend compilation and server startup verified. Browser date/DST/rapid-navigation edge cases remain unverified by the agent. Homepage Load exercise card removal included.
 
 
-### Task 10A — Final cleanup (awaiting approval)
+### Task 10A — Final cleanup (approved)
 
 Task 09 date-based history approved and committed/pushed as `2f4f3f4bcd48a31a80df4b1ccd93ff396f5effb1`, remote verified. Database date filtering, projections, V3 indexes and date navigation are complete; build/startup verification passed. Agent browser/DST/rapid-date-change verification was not performed.
 
@@ -717,3 +717,14 @@ Requested integrity checks only: frontend typecheck/lint/production build and ba
 User-authorized history deletion supersedes prior no-deletion UI constraint for explicitly confirmed session deletion. History list Delete asks for permanent-deletion confirmation. DELETE /api/sessions/{id} removes completed/interrupted session and attempt rows transactionally, then associated WebM/M4A files. Linked 3/4 deleted together across dates. Imports/images and prior exports preserved. Active sessions/conversions block deletion; cleanup failure is reported separately after DB deletion. Retry numbering uses max surviving attempt number instead of count to avoid unique conflicts. No learner records deleted during development. Build checks only; deletion behavior awaits user verification.
 
 Task 10A cleanup and explicit history deletion approved before Task 10B. Safety review: confirmation names permanent session/response/WebM/M4A deletion; whole linked session is the deletion unit. Only recording paths from that session are collected and validated, never image/package paths. Active sessions/conversions rejected; DB removal transactional; filesystem cleanup failures reported. Imports, shared scenes, unrelated attempts/recordings and earlier exports are preserved. No actual data deletion was performed during verification.
+
+
+### Task 10B — Finalization and macOS Shortcut preparation
+
+Approved Task 10A and explicit session deletion committed as `e10a89f7d3cfea4dec0c1cb600610a98a5d1f46a`, pushed and remote verified. Safety inspection confirmed only the selected completed/interrupted session's database attempts and validated WebM/M4A paths are deleted. Shared package images and unrelated recordings are not deletion targets. Linked 3/4 delete together; active sessions/conversions blocked. UI confirmation explicitly describes permanence and retained imports/exports. No deletion test was performed on real data.
+
+Prepared four macOS Shortcuts through exact Run Shell Script commands in docs/MACOS_SHORTCUTS.md. CLI inspection confirmed shortcuts supports run/list/view/sign but no create action, so manual shortcut creation is required rather than claiming programmatic installation. New scripts/start-local.sh checks managed ownership, application readiness and backend health; if healthy, opens Chrome without rebuild/restart. It starts/replaces only unavailable/unhealthy owned services, builds only missing backend artifacts/installs missing frontend dependencies, waits ready and opens Chrome. Existing Restart retains its deliberate build/restart behavior; Stop retains safe shutdown. Shared start/readiness helpers extracted to scripts/local-servers.sh; process helpers now expose explicit stop_all, used by Restart/Stop. All launchers use the common mutation lock and recorded PID/command identity, rejecting unfamiliar port listeners.
+
+scripts/practice-files.sh opens the running backend's actual process-lock directory in Finder; if stopped, uses its last resolved storage-root log. No guessed folder creation or data migration. Existing configured data root remains /Users/vikasvarmapokala/CELPIP-Data. Ports remain loopback 47321/47322. Background services use nohup and do not require Terminal to stay open.
+
+Prepared docs/CELPIP-bookmarks.html with a CELPIP folder and four shortcuts://run-shortcut links; existing Chrome bookmarks were never read, changed or overwritten. User can import or create the links manually after creating the named shortcuts. No browser automation or application feature tests run. Bash syntax checks passed for all six scripts; Start invoked twice reused backend PID 23815/frontend PID 23817 without builds or restarts. Cold/partial startup, OS permission prompts, actual Shortcuts invocation and Chrome/Shortcuts URL handling await user verification. Existing Restart still runs backend tests during its normal build and was not invoked for this preparation.
