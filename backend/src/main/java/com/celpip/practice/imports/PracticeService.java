@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import tools.jackson.databind.JsonNode;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.node.*;
 import java.time.Instant;
 import java.util.*;
@@ -20,7 +21,7 @@ public class PracticeService {
     PracticeService(SessionRepository sessions, AttemptRepository attempts, PackageRepository packages, PlatformTransactionManager manager) {
         this.sessions=sessions; this.attempts=attempts; this.packages=packages; tx=new TransactionTemplate(manager);
     }
-    @PostConstruct void recover() {
+    @PostConstruct public void recover() {
         tx.executeWithoutResult(t -> {
             for(var s:sessions.findAll()) if(s.status.equals("IN_PROGRESS")) {
                 s.status="INTERRUPTED"; s.reason="APPLICATION_RESTART"; sessions.save(s);
@@ -30,10 +31,14 @@ public class PracticeService {
     }
     static JsonNode parse(String raw) {
         if(raw.length()>2097152) throw ImportProblem.limit();
-        try { return JSON.readTree(raw); } catch(Exception ex) { throw new ImportProblem(400,"INVALID_JSON","request","Expected one JSON value with unique keys."); }
+        try { return JSON.readTree(raw); } catch(JacksonException ex) { throw new ImportProblem(400,"INVALID_JSON","request","Expected one JSON value with unique keys."); }
     }
     static void state(boolean ok) { if(!ok) throw new ImportProblem(409,"INVALID_STATE","request","Request conflicts with the current session or saved response."); }
-    static long duration(JsonNode n) { ImportProblem.require(n!=null && n.isIntegralNumber() && n.canConvertToLong() && n.longValue()>=0,"durationMs","Expected a nonnegative integer duration in milliseconds."); return n.longValue(); }
+    static long duration(JsonNode n) {
+        if (n == null || !n.isIntegralNumber() || !n.canConvertToLong() || n.longValue() < 0)
+            throw new ImportProblem(422, "INVALID_PACKAGE", "durationMs", "Expected a nonnegative integer duration in milliseconds.");
+        return n.longValue();
+    }
     PracticeSession session(String id) { return sessions.findById(id).orElseThrow(()->new ImportProblem(404,"SESSION_NOT_FOUND","sessionId","Session not found.")); }
     PracticeAttempt attempt(String id) { return attempts.findById(id).orElseThrow(()->new ImportProblem(404,"ATTEMPT_NOT_FOUND","attemptId","Attempt not found.")); }
     ExercisePackage pack(PracticeSession s) { return packages.findById(s.packageId).orElseThrow(); }

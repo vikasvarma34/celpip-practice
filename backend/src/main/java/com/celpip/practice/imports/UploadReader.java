@@ -31,6 +31,7 @@ public class UploadReader {
             require(Optional.ofNullable(file.getOriginalFilename()).orElse("").toLowerCase(Locale.ROOT).endsWith(".json"), "file", "Upload a JSON or ZIP file.");
             try (InputStream input = file.getInputStream()) { copy(input, jsonPath, limits.jsonBytes()); }
         } else {
+            if (json == null) throw new ImportProblem(422, "INVALID_PACKAGE", "upload", "Supply either file or json, not both.");
             byte[] bytes = json.getBytes(java.nio.charset.StandardCharsets.UTF_8);
             if (bytes.length > limits.jsonBytes()) throw ImportProblem.limit(); Files.write(jsonPath, bytes);
         }

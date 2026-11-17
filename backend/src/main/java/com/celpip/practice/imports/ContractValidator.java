@@ -2,6 +2,7 @@ package com.celpip.practice.imports;
 
 import org.springframework.stereotype.Component;
 import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.*;
 import tools.jackson.databind.json.JsonMapper;
 import java.net.URI;
@@ -25,7 +26,7 @@ public class ContractValidator {
             String utf8 = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
                 .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(bytes)).toString();
             root = JSON.readTree(utf8);
-        } catch (Exception ex) {
+        } catch (CharacterCodingException | JacksonException ex) {
             throw new ImportProblem(400, "INVALID_JSON", "$", "Use one valid UTF-8 JSON object with unique keys and no trailing data.");
         }
         fields(root, "$", "schemaVersion", "packageId", "module", "exercises");
@@ -45,9 +46,12 @@ public class ContractValidator {
             int max = module.equals("READING") ? 4 : module.equals("WRITING") ? 2 : 8;
             require(task >= 1 && task <= max, p + ".taskNumber", "Task number is outside the module range.");
             source(e.get("source"), p + ".source");
-            if (module.equals("READING")) reading(e, task, p, images);
-            else if (module.equals("WRITING")) writing(e.get("content"), task, p + ".content");
-            else speaking(e.get("content"), task, p + ".content", images);
+            switch (module) {
+                case "READING" -> reading(e, task, p, images);
+                case "WRITING" -> writing(e.get("content"), task, p + ".content");
+                case "SPEAKING" -> speaking(e.get("content"), task, p + ".content", images);
+                default -> throw new IllegalStateException("Unexpected validated module: " + module);
+            }
             list.add(e);
         }
         boolean pair = module.equals("SPEAKING") && (list.getFirst().get("taskNumber").intValue() == 3 || list.getFirst().get("taskNumber").intValue() == 4 || list.size() == 2);
@@ -59,12 +63,12 @@ public class ContractValidator {
         return new Validated(root, id, module, List.copyOf(list), Set.copyOf(images));
     }
     static void fields(JsonNode n, String p, String... names) {
-        require(n != null && n.isObject(), p, "Expected an object.");
+        if (n == null || !n.isObject()) throw new ImportProblem(422, "INVALID_PACKAGE", p, "Expected an object.");
         require(n.propertyNames().equals(Set.of(names)), p, "Required fields are " + String.join(", ", names) + "; additional fields are forbidden.");
     }
     static String text(JsonNode n, String p) { return plainText(n, p, false); }
     static String plainText(JsonNode n, String p, boolean inline) {
-        require(n != null && n.isString() && !n.stringValue().isBlank(), p, "Expected nonblank text.");
+        if (n == null || !n.isString() || n.stringValue().isBlank()) throw new ImportProblem(422, "INVALID_PACKAGE", p, "Expected nonblank text.");
         String s = n.stringValue();
         require(inline || (!s.contains("{{") && !s.contains("}}")), p, "Unexpanded placeholders are forbidden.");
         require(!MARKUP.matcher(s).find() && !s.contains("```") && !s.toLowerCase(Locale.ROOT).contains("lorem ipsum") && !s.strip().equals("..."), p, "Use plain text without executable markup or placeholder content.");
@@ -75,7 +79,8 @@ public class ContractValidator {
         String s = text(n, p); require(s.matches("[A-Za-z0-9_-]+"), p, "IDs may contain ASCII letters, digits, underscores and hyphens only."); return s;
     }
     static int integer(JsonNode n, String p) {
-        require(n != null && n.isIntegralNumber() && n.canConvertToInt(), p, "Expected an integer, without numeric coercion."); return n.intValue();
+        if (n == null || !n.isIntegralNumber() || !n.canConvertToInt()) throw new ImportProblem(422, "INVALID_PACKAGE", p, "Expected an integer, without numeric coercion.");
+        return n.intValue();
     }
     static JsonNode array(JsonNode n, String p, int min, int max) {
         require(n != null && n.isArray() && n.size() >= min && n.size() <= max, p, "Unexpected array size or type."); return n;
@@ -141,9 +146,11 @@ public class ContractValidator {
         for (int i = 0; i < passage.size(); i++) {
             JsonNode b = passage.get(i); String bp = p + ".passage[" + i + "]";
             require(b.isObject(), bp, "Expected a passage block."); String type = text(b.get("type"), bp + ".type");
-            if (task == 3) require(type.equals("PARAGRAPH"), bp, "Part 3 requires four labelled paragraphs.");
-            else if (task == 1 || task == 4) require(type.equals("TEXT"), bp, "This part accepts TEXT blocks only.");
-            else require(Set.of("TEXT", "IMAGE", "TABLE").contains(type), bp, "Part 2 accepts TEXT, IMAGE and TABLE blocks.");
+            switch (task) {
+                case 3 -> require(type.equals("PARAGRAPH"), bp, "Part 3 requires four labelled paragraphs.");
+                case 1, 4 -> require(type.equals("TEXT"), bp, "This part accepts TEXT blocks only.");
+                default -> require(Set.of("TEXT", "IMAGE", "TABLE").contains(type), bp, "Part 2 accepts TEXT, IMAGE and TABLE blocks.");
+            }
             switch (type) {
                 case "TEXT" -> { fields(b, bp, "type", "text"); text(b.get("text"), bp + ".text"); }
                 case "PARAGRAPH" -> { fields(b, bp, "type", "label", "text"); text(b.get("text"), bp + ".text"); require(text(b.get("label"), bp + ".label").equals(String.valueOf((char)('A' + i))), bp, "Paragraph labels must be A, B, C, D in order."); }
@@ -163,7 +170,8 @@ public class ContractValidator {
         String[] types = task == 3 ? new String[]{"PARAGRAPH_MATCH"} : task == 2 ? new String[]{"INLINE_BLANK", "MULTIPLE_CHOICE"} : new String[]{"MULTIPLE_CHOICE", "INLINE_BLANK"};
         int[] counts = switch (task) { case 1 -> new int[]{6, 5}; case 2 -> new int[]{5, 3}; case 3 -> new int[]{9}; default -> new int[]{5, 5}; };
         JsonNode groups = array(c.get("questionGroups"), p + ".questionGroups", types.length, types.length);
-        Set<String> expectedKeys = new HashSet<>(); JsonNode key = e.get("answerKey"); require(key != null && key.isObject(), "answerKey", "Expected answer key object.");
+        Set<String> expectedKeys = new HashSet<>(); JsonNode key = e.get("answerKey");
+        if (key == null || !key.isObject()) throw new ImportProblem(422, "INVALID_PACKAGE", "answerKey", "Expected answer key object.");
         int number = 1;
         for (int g = 0; g < types.length; g++) {
             JsonNode group = groups.get(g); String gp = p + ".questionGroups[" + g + "]"; boolean inline = types[g].equals("INLINE_BLANK");

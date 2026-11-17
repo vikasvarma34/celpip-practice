@@ -736,3 +736,5 @@ Reading results review refinement (awaiting user approval): extracted shared Rea
 Existing Reading result render-test expectations updated for collapsed mistake-first review; test execution intentionally omitted per requested verification scope.
 
 Reading results redesign explicitly approved for commit/push. Typecheck, lint and production build passed; no browser verification or test-suite execution claimed.
+
+Backend IDE warning cleanup: replaced indirect null guards with explicit throwing checks in ContractValidator, UploadReader and PracticeService while preserving validation status codes/messages. Narrowed JSON exception catches, converted suggested validation branches to switches, and made the Spring PostConstruct recovery callback public while retaining startup interruption recovery. Java 21 Maven packaging with `-DskipTests` passed; no tests or browser checks run. IDE diagnostic refresh awaits user confirmation. No contracts or stored data changed.
